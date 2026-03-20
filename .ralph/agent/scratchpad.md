@@ -39,3 +39,11 @@ Building a native macOS SwiftUI Gmail client with:
 - All 74 tests pass, build succeeds
 - Committed: 63d2de4
 - Next: Build verification & GCP setup guide (task-1774024192-0c60) is now unblocked
+
+## Iteration 3 - DONE
+- Added OAuth URL scheme (com.maxbox.MaxBox) to Info.plist for callback handling
+- Created GCP_SETUP.md: step-by-step guide for GCP project, OAuth consent screen, credentials, and manual testing checklist
+- Created zsh-compatible scripts: build.sh, run.sh, test.sh
+- Verified: build succeeds, 74/74 tests pass, app launches with 3-pane layout waiting for auth
+- Committed: d872171
+- ALL TASKS COMPLETE: Project is at the defined stopping point — builds, tests pass, runs waiting for auth
