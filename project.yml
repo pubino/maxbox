@@ -40,5 +40,6 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.maxbox.MaxBoxTests
+        GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MaxBox.app/Contents/MacOS/MaxBox"
         BUNDLE_LOADER: "$(TEST_HOST)"
