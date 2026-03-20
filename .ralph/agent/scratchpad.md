@@ -23,6 +23,19 @@ Building a native macOS SwiftUI Gmail client with:
 5. Tests - Unit tests with mocks for services
 6. Build verification & GCP setup guide
 
-## Iteration 1
-- Creating project scaffold with all source files (models, services, views, view models)
-- This is a greenfield project so creating the full app structure in one go is appropriate
+## Iteration 1 - DONE
+- Created full project scaffold: 27 files, MVVM architecture
+- App builds successfully with zero warnings on Xcode 26.3 / Swift 6.2.4
+- All models, services, ViewModels, and Views created
+- Git repo initialized, initial commit made
+- Next: UI views+ViewModels are already created in scaffold, so next tasks are tests (task-1774024188-78e2) and build verification (task-1774024192-0c60)
+
+## Iteration 2 - DONE
+- Closed ui:views task (already completed in scaffold)
+- Created 7 test files with 74 unit tests covering all models and ViewModels
+- Mock services: MockAuthenticationService, MockGmailAPIService, MockKeychainService
+- Test coverage: Account, Mailbox, MailboxType, Message, MessageListResponse, all 4 ViewModels
+- Fixed test target to auto-generate Info.plist (GENERATE_INFOPLIST_FILE: YES)
+- All 74 tests pass, build succeeds
+- Committed: 63d2de4
+- Next: Build verification & GCP setup guide (task-1774024192-0c60) is now unblocked

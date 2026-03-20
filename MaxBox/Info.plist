@@ -22,5 +22,16 @@
     <string></string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.productivity</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.maxbox.MaxBox.oauth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.maxbox.MaxBox</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
