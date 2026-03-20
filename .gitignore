@@ -17,6 +17,9 @@ Packages/
 *.swp
 *~
 
+# OAuth credentials
+scripts/.env.local
+
 # Ralph internals (keep .ralph/agent state files)
 .ralph/diagnostics/
 .ralph/*.lock

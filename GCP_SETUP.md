@@ -30,6 +30,9 @@
    - **Developer contact email**: your email
 4. Click **Save and Continue**
 5. On the **Scopes** page, click **Add or Remove Scopes** and add:
+   - `openid`
+   - `.../auth/userinfo.email` (or type: `email`)
+   - `.../auth/userinfo.profile` (or type: `profile`)
    - `https://www.googleapis.com/auth/gmail.readonly`
    - `https://www.googleapis.com/auth/gmail.modify`
    - `https://www.googleapis.com/auth/gmail.compose`
@@ -118,13 +121,13 @@ After authentication, verify each feature:
 Environment variables are not set. Ensure `MAXBOX_GMAIL_CLIENT_ID` and `MAXBOX_GMAIL_CLIENT_SECRET` are exported in the shell that launches MaxBox.
 
 ### "Access blocked: This app's request is invalid" (Error 400)
-The redirect URI does not match. Ensure your OAuth client type is **Desktop app** (not Web application). Desktop apps use the loopback/custom scheme flow.
+The redirect URI does not match. Ensure your OAuth client type is **Desktop app** (not Web application). Desktop apps use the loopback redirect flow (`http://127.0.0.1`).
 
 ### "Access Not Configured" (Error 403)
 The Gmail API is not enabled for your GCP project. Go to **APIs & Services > Library** and enable it.
 
 ### Browser opens but never redirects back
-Check that the URL scheme `com.maxbox.MaxBox` is registered in Info.plist under `CFBundleURLTypes`. This is already configured in the project.
+MaxBox starts a local HTTP server on a random port for the OAuth callback. Ensure the app is not blocked from binding to localhost by a firewall or security tool.
 
 ### "This app is blocked" or consent screen issues
 Your app is in Testing mode and the account is not a test user. Add the account under **OAuth consent screen > Test users**.
