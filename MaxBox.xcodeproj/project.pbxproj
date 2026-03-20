@@ -1,0 +1,490 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		168F5F863D111E20A9D84979 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EAF8921D65F0450E5745DA /* Mailbox.swift */; };
+		198128DCFF446EC6BD54496D /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA635C72F0C365C0E2DCE1E5 /* AuthenticationService.swift */; };
+		2B617127D3A5915A78E4799D /* MailboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D042F3723EF07D65BA6C7BE5 /* MailboxViewModel.swift */; };
+		2E66DD3B11FC2D8E6459675F /* MessageDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BDAE73D9403CA8A1DDB8EBB /* MessageDetailViewModel.swift */; };
+		32E9C3F65CFEBDC135CB0739 /* GmailAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9264CDBF870E982A25B676F8 /* GmailAPIService.swift */; };
+		448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7135D1D01A7A5F3145255A9 /* ComposeView.swift */; };
+		748D59798F120AF188FC743C /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAF96DFB986E52D88C1FB75D /* Message.swift */; };
+		7841962CE3933A218A63D7CB /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014706504B6AEFFE9BAAFA37 /* KeychainService.swift */; };
+		8C4F69A0B3CE1408B206CA21 /* ComposeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */; };
+		9E395C6214107F163596504E /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA71386B5DD351520210BB58 /* Account.swift */; };
+		AD61FCBBFB2F2ADFCDE57D75 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DFCA78F31D5F9D53368D74 /* SearchBar.swift */; };
+		BBA473751ED71D1B02928811 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A15E9550B62121DD0872C01 /* ContentView.swift */; };
+		C3D72772C436F41755AD757E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C29ACB10FD3A8159A4990EBF /* Assets.xcassets */; };
+		CDC1492C09B8C1DC6B5E6310 /* MessageListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48293CB6569ED00FED9861F7 /* MessageListViewModel.swift */; };
+		D371A9601DD4CD7A8ED86F61 /* MessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF636A1ABDDD65EE3F2EBF8 /* MessageDetailView.swift */; };
+		D9FB698D49DBB0178465164E /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7001A189174EAF081AF3F87C /* SidebarView.swift */; };
+		DDB64A10AB1D81C9329BD09E /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */; };
+		E3884BCA8142EBDA068189BD /* MaxBoxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB86BE739BFBA68DA843860E /* MaxBoxApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0065417874D89A42CBAE164D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D50EEA83BFB93C06AC54765A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93E23BA79500B0A406263609;
+			remoteInfo = MaxBox;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		014706504B6AEFFE9BAAFA37 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		29DFCA78F31D5F9D53368D74 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		48293CB6569ED00FED9861F7 /* MessageListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListViewModel.swift; sourceTree = "<group>"; };
+		4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
+		6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewModel.swift; sourceTree = "<group>"; };
+		6BDAE73D9403CA8A1DDB8EBB /* MessageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewModel.swift; sourceTree = "<group>"; };
+		7001A189174EAF081AF3F87C /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		8A15E9550B62121DD0872C01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8C148A4568F0BCE4526E66C7 /* MaxBox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MaxBox.entitlements; sourceTree = "<group>"; };
+		9264CDBF870E982A25B676F8 /* GmailAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailAPIService.swift; sourceTree = "<group>"; };
+		9A7B8FB0850E66251A95F4CD /* MaxBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaxBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E1F17686C36FBAB9AF39D95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A7135D1D01A7A5F3145255A9 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
+		BAF96DFB986E52D88C1FB75D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		C29ACB10FD3A8159A4990EBF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CA71386B5DD351520210BB58 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		CBF636A1ABDDD65EE3F2EBF8 /* MessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailView.swift; sourceTree = "<group>"; };
+		D042F3723EF07D65BA6C7BE5 /* MailboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailboxViewModel.swift; sourceTree = "<group>"; };
+		D0D804ECD39DA20BA43785A6 /* MaxBoxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaxBoxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB86BE739BFBA68DA843860E /* MaxBoxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBoxApp.swift; sourceTree = "<group>"; };
+		EA635C72F0C365C0E2DCE1E5 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		F5EAF8921D65F0450E5745DA /* Mailbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailbox.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0B76ACDA85B8DC058B4CD42C = {
+			isa = PBXGroup;
+			children = (
+				B6D37F1CC4A8125CBB1A50CB /* MaxBox */,
+				DB9E013FE38B18CD5F55A516 /* MaxBoxTests */,
+				7662C9764DACCE582F5F6280 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		15501C68D77529BB71FD5C72 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A7135D1D01A7A5F3145255A9 /* ComposeView.swift */,
+				8A15E9550B62121DD0872C01 /* ContentView.swift */,
+				CBF636A1ABDDD65EE3F2EBF8 /* MessageDetailView.swift */,
+				4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */,
+				29DFCA78F31D5F9D53368D74 /* SearchBar.swift */,
+				7001A189174EAF081AF3F87C /* SidebarView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2CDC63DD56EB92F2236574C9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CA71386B5DD351520210BB58 /* Account.swift */,
+				F5EAF8921D65F0450E5745DA /* Mailbox.swift */,
+				BAF96DFB986E52D88C1FB75D /* Message.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		73406A95A02932C61DB618EA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				EA635C72F0C365C0E2DCE1E5 /* AuthenticationService.swift */,
+				9264CDBF870E982A25B676F8 /* GmailAPIService.swift */,
+				014706504B6AEFFE9BAAFA37 /* KeychainService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		7662C9764DACCE582F5F6280 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9A7B8FB0850E66251A95F4CD /* MaxBox.app */,
+				D0D804ECD39DA20BA43785A6 /* MaxBoxTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B6D37F1CC4A8125CBB1A50CB /* MaxBox */ = {
+			isa = PBXGroup;
+			children = (
+				C29ACB10FD3A8159A4990EBF /* Assets.xcassets */,
+				9E1F17686C36FBAB9AF39D95 /* Info.plist */,
+				8C148A4568F0BCE4526E66C7 /* MaxBox.entitlements */,
+				DB86BE739BFBA68DA843860E /* MaxBoxApp.swift */,
+				2CDC63DD56EB92F2236574C9 /* Models */,
+				73406A95A02932C61DB618EA /* Services */,
+				E02D1216735555FFA14B1E3C /* ViewModels */,
+				15501C68D77529BB71FD5C72 /* Views */,
+			);
+			path = MaxBox;
+			sourceTree = "<group>";
+		};
+		DB9E013FE38B18CD5F55A516 /* MaxBoxTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = MaxBoxTests;
+			sourceTree = "<group>";
+		};
+		E02D1216735555FFA14B1E3C /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */,
+				D042F3723EF07D65BA6C7BE5 /* MailboxViewModel.swift */,
+				6BDAE73D9403CA8A1DDB8EBB /* MessageDetailViewModel.swift */,
+				48293CB6569ED00FED9861F7 /* MessageListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		469BC3C9B35A7C365D955DFF /* MaxBoxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9779C781A25AEDFD7AD224CF /* Build configuration list for PBXNativeTarget "MaxBoxTests" */;
+			buildPhases = (
+				0BC682962659E6895276F27D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3EF463C6F252F9C0CBCE7920 /* PBXTargetDependency */,
+			);
+			name = MaxBoxTests;
+			packageProductDependencies = (
+			);
+			productName = MaxBoxTests;
+			productReference = D0D804ECD39DA20BA43785A6 /* MaxBoxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		93E23BA79500B0A406263609 /* MaxBox */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 037C03ABE348107F9951CE3C /* Build configuration list for PBXNativeTarget "MaxBox" */;
+			buildPhases = (
+				83FA84C4D77B04A57D2F864F /* Sources */,
+				7AA2821A873C326E4C209B4A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MaxBox;
+			packageProductDependencies = (
+			);
+			productName = MaxBox;
+			productReference = 9A7B8FB0850E66251A95F4CD /* MaxBox.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D50EEA83BFB93C06AC54765A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 7D64329541E96DD4DC0845E4 /* Build configuration list for PBXProject "MaxBox" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0B76ACDA85B8DC058B4CD42C;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				93E23BA79500B0A406263609 /* MaxBox */,
+				469BC3C9B35A7C365D955DFF /* MaxBoxTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7AA2821A873C326E4C209B4A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3D72772C436F41755AD757E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0BC682962659E6895276F27D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83FA84C4D77B04A57D2F864F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9E395C6214107F163596504E /* Account.swift in Sources */,
+				198128DCFF446EC6BD54496D /* AuthenticationService.swift in Sources */,
+				448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */,
+				8C4F69A0B3CE1408B206CA21 /* ComposeViewModel.swift in Sources */,
+				BBA473751ED71D1B02928811 /* ContentView.swift in Sources */,
+				32E9C3F65CFEBDC135CB0739 /* GmailAPIService.swift in Sources */,
+				7841962CE3933A218A63D7CB /* KeychainService.swift in Sources */,
+				168F5F863D111E20A9D84979 /* Mailbox.swift in Sources */,
+				2B617127D3A5915A78E4799D /* MailboxViewModel.swift in Sources */,
+				E3884BCA8142EBDA068189BD /* MaxBoxApp.swift in Sources */,
+				748D59798F120AF188FC743C /* Message.swift in Sources */,
+				D371A9601DD4CD7A8ED86F61 /* MessageDetailView.swift in Sources */,
+				2E66DD3B11FC2D8E6459675F /* MessageDetailViewModel.swift in Sources */,
+				DDB64A10AB1D81C9329BD09E /* MessageListView.swift in Sources */,
+				CDC1492C09B8C1DC6B5E6310 /* MessageListViewModel.swift in Sources */,
+				AD61FCBBFB2F2ADFCDE57D75 /* SearchBar.swift in Sources */,
+				D9FB698D49DBB0178465164E /* SidebarView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3EF463C6F252F9C0CBCE7920 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93E23BA79500B0A406263609 /* MaxBox */;
+			targetProxy = 0065417874D89A42CBAE164D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7D32F3D593A825CD87265466 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MaxBox/MaxBox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MaxBox/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxbox.MaxBox;
+				PRODUCT_NAME = MaxBox;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		98413C74988B97B386E3B465 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		9FB87AF6AFA745EC0F35F8AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxbox.MaxBoxTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MaxBox.app/Contents/MacOS/MaxBox";
+			};
+			name = Debug;
+		};
+		CAEE40A23CA9328F414E2847 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MaxBox/MaxBox.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = MaxBox/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxbox.MaxBox;
+				PRODUCT_NAME = MaxBox;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		CCD746AA38DDCAB34AC3C9DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		D200844AD64BC958A98E855E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxbox.MaxBoxTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MaxBox.app/Contents/MacOS/MaxBox";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		037C03ABE348107F9951CE3C /* Build configuration list for PBXNativeTarget "MaxBox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D32F3D593A825CD87265466 /* Debug */,
+				CAEE40A23CA9328F414E2847 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7D64329541E96DD4DC0845E4 /* Build configuration list for PBXProject "MaxBox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CCD746AA38DDCAB34AC3C9DF /* Debug */,
+				98413C74988B97B386E3B465 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9779C781A25AEDFD7AD224CF /* Build configuration list for PBXNativeTarget "MaxBoxTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FB87AF6AFA745EC0F35F8AD /* Debug */,
+				D200844AD64BC958A98E855E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D50EEA83BFB93C06AC54765A /* Project object */;
+}

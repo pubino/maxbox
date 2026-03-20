@@ -1,0 +1,25 @@
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+.build/
+Packages/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Ralph internals (keep .ralph/agent state files)
+.ralph/diagnostics/
+.ralph/*.lock
+.ralph/current-*
+.ralph/events-*
+.ralph/history.*

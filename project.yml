@@ -1,0 +1,44 @@
+name: MaxBox
+options:
+  bundleIdPrefix: com.maxbox
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+
+targets:
+  MaxBox:
+    type: application
+    platform: macOS
+    sources:
+      - MaxBox
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.maxbox.MaxBox
+        INFOPLIST_FILE: MaxBox/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MaxBox/MaxBox.entitlements
+        PRODUCT_NAME: MaxBox
+        COMBINE_HIDPI_IMAGES: YES
+    entitlements:
+      path: MaxBox/MaxBox.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+
+  MaxBoxTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - MaxBoxTests
+    dependencies:
+      - target: MaxBox
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.maxbox.MaxBoxTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MaxBox.app/Contents/MacOS/MaxBox"
+        BUNDLE_LOADER: "$(TEST_HOST)"
