@@ -40,6 +40,14 @@ struct MaxBoxApp: App {
         }
         .defaultSize(width: 560, height: 480)
 
+        WindowGroup("Message", id: "message", for: MessageWindowContext.self) { $context in
+            if let context {
+                MessageWindowView(context: context)
+                    .environmentObject(mailboxViewModel)
+            }
+        }
+        .defaultSize(width: 700, height: 600)
+
         Window("Activity", id: "activity") {
             ActivityView()
                 .environmentObject(activityManager)

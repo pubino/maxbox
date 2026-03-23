@@ -3,6 +3,7 @@ import SwiftUI
 struct MessageListView: View {
     @ObservedObject var viewModel: MessageListViewModel
     @EnvironmentObject var mailboxVM: MailboxViewModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(spacing: 0) {
@@ -44,6 +45,13 @@ struct MessageListView: View {
                             accountEmail: showAccountBadge ? mailboxVM.accountEmail(for: message.accountId ?? "") : nil
                         )
                         .tag(message.id)
+                        .simultaneousGesture(TapGesture(count: 2).onEnded {
+                            let accountId = message.accountId ?? mailboxVM.selectedAccountId ?? ""
+                            openWindow(id: "message", value: MessageWindowContext(
+                                messageId: message.id,
+                                accountId: accountId
+                            ))
+                        })
                     }
                 }
                 .listStyle(.plain)
