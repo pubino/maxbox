@@ -120,6 +120,56 @@ final class ComposeViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Reply / Forward
+
+    func populateFromContext(_ ctx: ComposeContext) {
+        suppressDirty = true
+
+        switch ctx.mode {
+        case .reply:
+            to = ctx.originalFrom
+            subject = ctx.originalSubject.hasPrefix("Re:") ? ctx.originalSubject : "Re: \(ctx.originalSubject)"
+        case .replyAll:
+            to = ctx.originalFrom
+            let others = ctx.originalTo + ctx.originalCc
+            cc = others.joined(separator: ", ")
+            subject = ctx.originalSubject.hasPrefix("Re:") ? ctx.originalSubject : "Re: \(ctx.originalSubject)"
+        case .forward:
+            subject = ctx.originalSubject.hasPrefix("Fwd:") ? ctx.originalSubject : "Fwd: \(ctx.originalSubject)"
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        let dateStr = dateFormatter.string(from: ctx.originalDate)
+
+        let quotedHeader = "\n\nOn \(dateStr), \(ctx.originalFrom) wrote:\n"
+        let quotedBody: String
+        if let html = ctx.originalBodyHTML, !html.isEmpty {
+            // Strip HTML tags for plain-text quoting
+            let stripped = html
+                .replacingOccurrences(of: "<br[^>]*>", with: "\n", options: .regularExpression)
+                .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+                .replacingOccurrences(of: "&nbsp;", with: " ")
+                .replacingOccurrences(of: "&amp;", with: "&")
+                .replacingOccurrences(of: "&lt;", with: "<")
+                .replacingOccurrences(of: "&gt;", with: ">")
+                .replacingOccurrences(of: "&quot;", with: "\"")
+            quotedBody = stripped.split(separator: "\n", omittingEmptySubsequences: false)
+                .map { "> \($0)" }
+                .joined(separator: "\n")
+        } else {
+            quotedBody = ctx.originalBody.split(separator: "\n", omittingEmptySubsequences: false)
+                .map { "> \($0)" }
+                .joined(separator: "\n")
+        }
+
+        body = quotedHeader + quotedBody
+
+        isDirty = false
+        suppressDirty = false
+    }
+
     // MARK: - Send
 
     func send(accessToken: String) async {

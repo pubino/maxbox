@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		02954F048AD749347068F955 /* MessageWindowContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7279803F4E8683B8FAACE8 /* MessageWindowContext.swift */; };
 		02BBC267AC594B12C30A164D /* HTMLContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A285FF972878B2A62635596D /* HTMLContentView.swift */; };
+		0B9CB2DFC19C13D4CB1D95F8 /* ComposeContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65C0DF468B8F0DDECCD3145 /* ComposeContextTests.swift */; };
 		0E03123A8AB7BD80D45CB0DE /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C12C99AC050770C4C331E9 /* KeychainServiceTests.swift */; };
 		0F3F9EB308DA3F079D4892D9 /* PersistableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D4F22C0748E60DA7F29BD4 /* PersistableTypes.swift */; };
 		168F5F863D111E20A9D84979 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EAF8921D65F0450E5745DA /* Mailbox.swift */; };
@@ -47,6 +48,7 @@
 		DD484B270B34FE28D67876A0 /* MessageListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3250A21FAB8C58D991E027EC /* MessageListViewModelTests.swift */; };
 		DDB64A10AB1D81C9329BD09E /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */; };
 		E3884BCA8142EBDA068189BD /* MaxBoxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB86BE739BFBA68DA843860E /* MaxBoxApp.swift */; };
+		E6B16015D546A3CFAFF74FA8 /* ComposeContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478FC16C9534F1179641B221 /* ComposeContext.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,7 @@
 		29DFCA78F31D5F9D53368D74 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		3250A21FAB8C58D991E027EC /* MessageListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListViewModelTests.swift; sourceTree = "<group>"; };
 		375C6709331F681AE5FCA79C /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		478FC16C9534F1179641B221 /* ComposeContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeContext.swift; sourceTree = "<group>"; };
 		48293CB6569ED00FED9861F7 /* MessageListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListViewModel.swift; sourceTree = "<group>"; };
 		4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
 		6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewModel.swift; sourceTree = "<group>"; };
@@ -90,6 +93,7 @@
 		A1A85D4CA237C5CAD4A75C86 /* MailActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailActivity.swift; sourceTree = "<group>"; };
 		A285FF972878B2A62635596D /* HTMLContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLContentView.swift; sourceTree = "<group>"; };
 		A41A9E39490036B9CE2025CD /* MessageWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageWindowView.swift; sourceTree = "<group>"; };
+		A65C0DF468B8F0DDECCD3145 /* ComposeContextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeContextTests.swift; sourceTree = "<group>"; };
 		A7135D1D01A7A5F3145255A9 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
 		BAF96DFB986E52D88C1FB75D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		C29ACB10FD3A8159A4990EBF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -139,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				CA71386B5DD351520210BB58 /* Account.swift */,
+				478FC16C9534F1179641B221 /* ComposeContext.swift */,
 				8F1810D4C446FCDEFBE868D1 /* DraftComposeContext.swift */,
 				A1A85D4CA237C5CAD4A75C86 /* MailActivity.swift */,
 				F5EAF8921D65F0450E5745DA /* Mailbox.swift */,
@@ -197,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				D1DE55873A18B1FFA1CC3864 /* ActivityManagerTests.swift */,
+				A65C0DF468B8F0DDECCD3145 /* ComposeContextTests.swift */,
 				FF018688BFBB417132AE9520 /* ComposeViewModelTests.swift */,
 				8F8A10D68117671FBF2132A2 /* DraftComposeTests.swift */,
 				91C12C99AC050770C4C331E9 /* KeychainServiceTests.swift */,
@@ -309,6 +315,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7792D4A7B1B1F1F274D2B03F /* ActivityManagerTests.swift in Sources */,
+				0B9CB2DFC19C13D4CB1D95F8 /* ComposeContextTests.swift in Sources */,
 				CD823AD834594D3FCF26D48D /* ComposeViewModelTests.swift in Sources */,
 				517B785D39CAEC30886EA571 /* DraftComposeTests.swift in Sources */,
 				0E03123A8AB7BD80D45CB0DE /* KeychainServiceTests.swift in Sources */,
@@ -331,6 +338,7 @@
 				99DF56F58CC23CE9ED41CD74 /* ActivityManager.swift in Sources */,
 				ACD3382AD6E34EE926D7467C /* ActivityView.swift in Sources */,
 				198128DCFF446EC6BD54496D /* AuthenticationService.swift in Sources */,
+				E6B16015D546A3CFAFF74FA8 /* ComposeContext.swift in Sources */,
 				448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */,
 				8C4F69A0B3CE1408B206CA21 /* ComposeViewModel.swift in Sources */,
 				BBA473751ED71D1B02928811 /* ContentView.swift in Sources */,

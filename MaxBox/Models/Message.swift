@@ -47,6 +47,12 @@ struct Message: Identifiable, Hashable, Codable {
         labelIds.contains("DRAFT")
     }
 
+    var hasRemoteImages: Bool {
+        guard let html = bodyHTML else { return false }
+        let pattern = #"<img[^>]+src\s*=\s*["']https?://"#
+        return html.range(of: pattern, options: .regularExpression) != nil
+    }
+
     static let placeholder = Message(
         id: "",
         threadId: "",

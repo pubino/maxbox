@@ -9,8 +9,26 @@ struct SettingsView: View {
                 .tabItem {
                     Label("Accounts", systemImage: "person.2.fill")
                 }
+
+            PrivacySettingsView()
+                .tabItem {
+                    Label("Privacy", systemImage: "hand.raised.fill")
+                }
         }
         .frame(width: 500, height: 350)
+    }
+}
+
+struct PrivacySettingsView: View {
+    @AppStorage("loadRemoteImages") private var loadRemoteImages = false
+
+    var body: some View {
+        Form {
+            Toggle("Load Remote Images Automatically", isOn: $loadRemoteImages)
+                .help("When disabled, remote images in messages will not be loaded until you choose to load them.")
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 

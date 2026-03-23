@@ -26,6 +26,30 @@ struct ContentView: View {
             }
 
             ToolbarItem(placement: .automatic) {
+                Button { replyToMessage() } label: {
+                    Label("Reply", systemImage: "arrowshape.turn.up.left")
+                }
+                .help("Reply")
+                .disabled(messageDetailVM.message == nil)
+            }
+
+            ToolbarItem(placement: .automatic) {
+                Button { replyAllToMessage() } label: {
+                    Label("Reply All", systemImage: "arrowshape.turn.up.left.2")
+                }
+                .help("Reply All")
+                .disabled(messageDetailVM.message == nil)
+            }
+
+            ToolbarItem(placement: .automatic) {
+                Button { forwardMessage() } label: {
+                    Label("Forward", systemImage: "arrowshape.turn.up.right")
+                }
+                .help("Forward")
+                .disabled(messageDetailVM.message == nil)
+            }
+
+            ToolbarItem(placement: .automatic) {
                 Button { Task { await archiveMessage() } } label: {
                     Label("Archive", systemImage: "archivebox")
                 }
@@ -98,6 +122,37 @@ struct ContentView: View {
             let token = try await mailboxVM.getAccessToken(for: accountId)
             return [(accountId, token)]
         }
+    }
+
+    private func buildComposeContext(mode: ComposeMode) -> ComposeContext? {
+        guard let message = messageDetailVM.message else { return nil }
+        let accountId = message.accountId ?? mailboxVM.selectedAccountId ?? mailboxVM.activeAccounts.first?.id ?? ""
+        return ComposeContext(
+            mode: mode,
+            accountId: accountId,
+            originalFrom: message.from,
+            originalTo: message.to,
+            originalCc: message.cc,
+            originalSubject: message.subject,
+            originalDate: message.date,
+            originalBody: message.body,
+            originalBodyHTML: message.bodyHTML
+        )
+    }
+
+    private func replyToMessage() {
+        guard let ctx = buildComposeContext(mode: .reply) else { return }
+        openWindow(id: "compose-reply", value: ctx)
+    }
+
+    private func replyAllToMessage() {
+        guard let ctx = buildComposeContext(mode: .replyAll) else { return }
+        openWindow(id: "compose-reply", value: ctx)
+    }
+
+    private func forwardMessage() {
+        guard let ctx = buildComposeContext(mode: .forward) else { return }
+        openWindow(id: "compose-reply", value: ctx)
     }
 
     private func archiveMessage() async {

@@ -56,16 +56,34 @@ struct MessageWindowView: View {
         await viewModel.loadMessage(accessToken: token, messageId: context.messageId)
     }
 
+    private func buildComposeContext(mode: ComposeMode) -> ComposeContext? {
+        guard let message = viewModel.message else { return nil }
+        return ComposeContext(
+            mode: mode,
+            accountId: context.accountId,
+            originalFrom: message.from,
+            originalTo: message.to,
+            originalCc: message.cc,
+            originalSubject: message.subject,
+            originalDate: message.date,
+            originalBody: message.body,
+            originalBodyHTML: message.bodyHTML
+        )
+    }
+
     private func replyToMessage() {
-        openWindow(id: "compose", value: UUID())
+        guard let ctx = buildComposeContext(mode: .reply) else { return }
+        openWindow(id: "compose-reply", value: ctx)
     }
 
     private func replyAllToMessage() {
-        openWindow(id: "compose", value: UUID())
+        guard let ctx = buildComposeContext(mode: .replyAll) else { return }
+        openWindow(id: "compose-reply", value: ctx)
     }
 
     private func forwardMessage() {
-        openWindow(id: "compose", value: UUID())
+        guard let ctx = buildComposeContext(mode: .forward) else { return }
+        openWindow(id: "compose-reply", value: ctx)
     }
 
     private func archiveMessage() async {

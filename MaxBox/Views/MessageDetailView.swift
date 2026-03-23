@@ -2,6 +2,8 @@ import SwiftUI
 
 struct MessageDetailView: View {
     @ObservedObject var viewModel: MessageDetailViewModel
+    @AppStorage("loadRemoteImages") private var loadRemoteImages = false
+    @State private var loadImagesForCurrentMessage = false
 
     var body: some View {
         Group {
@@ -18,6 +20,13 @@ struct MessageDetailView: View {
             }
         }
         .frame(minWidth: 400)
+        .onChange(of: viewModel.message?.id) {
+            loadImagesForCurrentMessage = false
+        }
+    }
+
+    private var shouldLoadImages: Bool {
+        loadRemoteImages || loadImagesForCurrentMessage
     }
 
     @ViewBuilder
@@ -30,7 +39,11 @@ struct MessageDetailView: View {
 
                     Divider()
 
-                    HTMLContentView(html: message.bodyHTML!)
+                    if !shouldLoadImages && message.hasRemoteImages {
+                        remoteImagesBanner
+                    }
+
+                    HTMLContentView(html: message.bodyHTML!, allowRemoteImages: shouldLoadImages)
                 }
             } else {
                 ScrollView {
@@ -47,6 +60,25 @@ struct MessageDetailView: View {
                 }
             }
         }
+    }
+
+    private var remoteImagesBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "photo.badge.exclamationmark")
+                .foregroundStyle(.secondary)
+            Text("Remote images are hidden.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            Button("Load Images") {
+                loadImagesForCurrentMessage = true
+            }
+            .buttonStyle(.borderless)
+            .font(.callout)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.quaternary)
     }
 
     @ViewBuilder

@@ -9,6 +9,7 @@ struct ComposeView: View {
     @State private var showBcc = false
 
     var draftContext: DraftComposeContext?
+    var composeContext: ComposeContext?
 
     private enum CloseAction {
         case saveDraft, discard
@@ -122,6 +123,8 @@ struct ComposeView: View {
             let accountId: String?
             if let ctx = draftContext {
                 accountId = ctx.accountId
+            } else if let ctx = composeContext {
+                accountId = ctx.accountId
             } else {
                 accountId = mailboxVM.selectedAccountId ?? mailboxVM.activeAccounts.first?.id
             }
@@ -133,6 +136,8 @@ struct ComposeView: View {
 
             if let ctx = draftContext {
                 await viewModel.loadDraft(accessToken: token, messageId: ctx.messageId)
+            } else if let ctx = composeContext {
+                viewModel.populateFromContext(ctx)
             }
 
             viewModel.startAutoSave()

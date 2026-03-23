@@ -44,6 +44,7 @@ struct MessageListView: View {
                             message: message,
                             accountEmail: showAccountBadge ? mailboxVM.accountEmail(for: message.accountId ?? "") : nil
                         )
+                        .contentShape(Rectangle())
                         .tag(message.id)
                         .simultaneousGesture(TapGesture(count: 2).onEnded {
                             let accountId = message.accountId ?? mailboxVM.selectedAccountId ?? ""
