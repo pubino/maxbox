@@ -2,24 +2,61 @@
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
 *.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 DerivedData/
 build/
 *.ipa
 *.dSYM.zip
 *.dSYM
+*.xcresult
+*.moved-aside
+*.xcuserstate
+*.hmap
+*.xccheckout
+*.xcscmblueprint
 
 # Swift Package Manager
 .build/
+.swiftpm/
 Packages/
+Package.resolved
 
 # macOS
 .DS_Store
+**/.DS_Store
 *.swp
 *~
+.Spotlight-V100
+.Trashes
+._*
 
-# OAuth credentials
+# Editors / IDEs
+.vscode/
+.idea/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# OAuth credentials and secrets
 scripts/.env.local
+scripts/.env
+.env
+.env.local
+.env.*.local
 Secrets.xcconfig
+
+# Notarization logs
+notarize-log-*.json
+
+# Code signing
+*.p12
+*.mobileprovision
+*.provisionprofile
 
 # Ralph internals (keep .ralph/agent state files)
 .ralph/diagnostics/
@@ -27,3 +64,13 @@ Secrets.xcconfig
 .ralph/current-*
 .ralph/events-*
 .ralph/history.*
+.ralph/agent/*.lock
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
