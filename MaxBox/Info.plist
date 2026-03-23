@@ -22,5 +22,9 @@
     <string></string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.productivity</string>
+    <key>MAXBOX_GMAIL_CLIENT_ID</key>
+    <string>$(MAXBOX_GMAIL_CLIENT_ID)</string>
+    <key>MAXBOX_GMAIL_CLIENT_SECRET</key>
+    <string>$(MAXBOX_GMAIL_CLIENT_SECRET)</string>
 </dict>
 </plist>

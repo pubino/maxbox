@@ -28,10 +28,23 @@ protocol AuthenticationServiceProtocol {
 }
 
 final class AuthenticationService: AuthenticationServiceProtocol {
-    // These must be set from GCP OAuth2 credentials
-    // See GCP_SETUP.md for registration instructions
-    static let clientId = ProcessInfo.processInfo.environment["MAXBOX_GMAIL_CLIENT_ID"] ?? ""
-    static let clientSecret = ProcessInfo.processInfo.environment["MAXBOX_GMAIL_CLIENT_SECRET"] ?? ""
+    // Read from Info.plist (injected via Secrets.xcconfig at build time).
+    // Falls back to environment variables for CLI/script-based runs.
+    static let clientId: String = {
+        if let value = Bundle.main.object(forInfoDictionaryKey: "MAXBOX_GMAIL_CLIENT_ID") as? String,
+           !value.isEmpty, !value.hasPrefix("$(") {
+            return value
+        }
+        return ProcessInfo.processInfo.environment["MAXBOX_GMAIL_CLIENT_ID"] ?? ""
+    }()
+
+    static let clientSecret: String = {
+        if let value = Bundle.main.object(forInfoDictionaryKey: "MAXBOX_GMAIL_CLIENT_SECRET") as? String,
+           !value.isEmpty, !value.hasPrefix("$(") {
+            return value
+        }
+        return ProcessInfo.processInfo.environment["MAXBOX_GMAIL_CLIENT_SECRET"] ?? ""
+    }()
 
     static let scopes = [
         "openid",
@@ -236,7 +249,9 @@ private final class LoopbackAuthServer: @unchecked Sendable {
 
     func start() throws -> UInt16 {
         serverFD = socket(AF_INET, SOCK_STREAM, 0)
-        guard serverFD >= 0 else { throw AuthError.invalidResponse }
+        guard serverFD >= 0 else {
+            throw AuthError.tokenExchangeFailed("Failed to create socket (errno \(errno)). Check network.server entitlement.")
+        }
 
         var reuse: Int32 = 1
         setsockopt(serverFD, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size))
@@ -255,13 +270,13 @@ private final class LoopbackAuthServer: @unchecked Sendable {
         guard bindResult == 0 else {
             Darwin.close(serverFD)
             serverFD = -1
-            throw AuthError.invalidResponse
+            throw AuthError.tokenExchangeFailed("Failed to bind loopback port (errno \(errno)). Check network.server entitlement.")
         }
 
         guard listen(serverFD, 1) == 0 else {
             Darwin.close(serverFD)
             serverFD = -1
-            throw AuthError.invalidResponse
+            throw AuthError.tokenExchangeFailed("Failed to listen on loopback port (errno \(errno)).")
         }
 
         // Read back the OS-assigned port
@@ -288,7 +303,7 @@ private final class LoopbackAuthServer: @unchecked Sendable {
                     }
                 }
                 guard clientFD >= 0 else {
-                    continuation.resume(throwing: AuthError.invalidResponse)
+                    continuation.resume(throwing: AuthError.tokenExchangeFailed("Loopback server accept failed (errno \(errno)). The OAuth callback could not be received."))
                     return
                 }
 
@@ -296,7 +311,7 @@ private final class LoopbackAuthServer: @unchecked Sendable {
                 let bytesRead = recv(clientFD, &buffer, buffer.count, 0)
                 guard bytesRead > 0 else {
                     Darwin.close(clientFD)
-                    continuation.resume(throwing: AuthError.invalidResponse)
+                    continuation.resume(throwing: AuthError.tokenExchangeFailed("No data received from OAuth callback."))
                     return
                 }
 

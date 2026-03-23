@@ -3,18 +3,11 @@ import SwiftUI
 struct MessageListView: View {
     @ObservedObject var viewModel: MessageListViewModel
     @EnvironmentObject var mailboxVM: MailboxViewModel
-    var onComposeClicked: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            // Toolbar with compose and filter
+            // Filter toolbar
             HStack {
-                Button(action: onComposeClicked) {
-                    Label("Compose", systemImage: "square.and.pencil")
-                }
-                .buttonStyle(.borderless)
-                .help("Compose new message")
-
                 Spacer()
 
                 Button {
@@ -32,11 +25,7 @@ struct MessageListView: View {
             Divider()
 
             // Message list
-            if viewModel.isLoading && viewModel.messages.isEmpty {
-                Spacer()
-                ProgressView("Loading messages...")
-                Spacer()
-            } else if viewModel.filteredMessages.isEmpty {
+            if viewModel.filteredMessages.isEmpty {
                 Spacer()
                 VStack(spacing: 8) {
                     Image(systemName: "tray")
@@ -47,10 +36,14 @@ struct MessageListView: View {
                 }
                 Spacer()
             } else {
+                let showAccountBadge = mailboxVM.isMultiAccount && mailboxVM.selectedAccountId == nil
                 List(selection: $viewModel.selectedMessageId) {
                     ForEach(viewModel.filteredMessages) { message in
-                        MessageRowView(message: message)
-                            .tag(message.id)
+                        MessageRowView(
+                            message: message,
+                            accountEmail: showAccountBadge ? mailboxVM.accountEmail(for: message.accountId ?? "") : nil
+                        )
+                        .tag(message.id)
                     }
                 }
                 .listStyle(.plain)
@@ -82,8 +75,21 @@ struct MessageListView: View {
 
 struct MessageRowView: View {
     let message: Message
+    var accountEmail: String? = nil
 
     var body: some View {
+        HStack(alignment: .top, spacing: 6) {
+            Circle()
+                .fill(message.isRead ? .clear : .blue)
+                .frame(width: 8, height: 8)
+                .padding(.top, 6)
+
+            messageContent
+        }
+        .padding(.vertical, 4)
+    }
+
+    private var messageContent: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Text(message.fromDisplay)
@@ -109,20 +115,28 @@ struct MessageRowView: View {
                 .fontWeight(message.isRead ? .regular : .semibold)
                 .lineLimit(1)
 
-            Text(message.snippet)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
+            HStack {
+                Text(message.snippet)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+
+                if let email = accountEmail {
+                    Spacer()
+                    Text(email)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.quaternary, in: Capsule())
+                }
+            }
         }
-        .padding(.vertical, 4)
         .opacity(message.isRead ? 0.85 : 1.0)
     }
 }
 
 #Preview {
-    MessageListView(
-        viewModel: MessageListViewModel(),
-        onComposeClicked: {}
-    )
-    .environmentObject(MailboxViewModel())
+    MessageListView(viewModel: MessageListViewModel())
+        .environmentObject(MailboxViewModel())
 }

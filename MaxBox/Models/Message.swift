@@ -1,6 +1,6 @@
 import Foundation
 
-struct Message: Identifiable, Hashable {
+struct Message: Identifiable, Hashable, Codable {
     let id: String
     let threadId: String
     var subject: String
@@ -10,9 +10,11 @@ struct Message: Identifiable, Hashable {
     var date: Date
     var snippet: String
     var body: String
+    var bodyHTML: String?
     var isRead: Bool
     var isStarred: Bool
     var labelIds: [String]
+    var accountId: String?
 
     var fromDisplay: String {
         // Extract display name or email
@@ -35,6 +37,10 @@ struct Message: Identifiable, Hashable {
             formatter.dateFormat = "MMM d"
             return formatter.string(from: date)
         }
+    }
+
+    var hasHTML: Bool {
+        bodyHTML != nil && !(bodyHTML?.isEmpty ?? true)
     }
 
     static let placeholder = Message(

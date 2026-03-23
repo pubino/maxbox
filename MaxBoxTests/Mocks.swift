@@ -88,6 +88,18 @@ final class MockGmailAPIService: GmailAPIServiceProtocol {
     var lastSendSubject: String?
     var lastSendBody: String?
     var lastSendCc: String?
+    var lastSendBcc: String?
+
+    var createDraftResult: Result<String, Error> = .success("mock-draft-id")
+    var updateDraftError: Error?
+    var deleteDraftError: Error?
+    var createDraftCallCount = 0
+    var updateDraftCallCount = 0
+    var deleteDraftCallCount = 0
+    var lastDraftId: String?
+
+    // Track all access tokens used across calls
+    var allListAccessTokens: [String] = []
 
     func listMessages(accessToken: String, labelId: String, query: String?, pageToken: String?, maxResults: Int) async throws -> MessageListResponse {
         listMessagesCallCount += 1
@@ -95,6 +107,7 @@ final class MockGmailAPIService: GmailAPIServiceProtocol {
         lastListLabelId = labelId
         lastListQuery = query
         lastListPageToken = pageToken
+        allListAccessTokens.append(accessToken)
         switch listMessagesResult {
         case .success(let response): return response
         case .failure(let error): throw error
@@ -115,9 +128,11 @@ final class MockGmailAPIService: GmailAPIServiceProtocol {
                 date: message.date,
                 snippet: message.snippet,
                 body: message.body,
+                bodyHTML: message.bodyHTML,
                 isRead: message.isRead,
                 isStarred: message.isStarred,
-                labelIds: message.labelIds
+                labelIds: message.labelIds,
+                accountId: message.accountId
             )
         case .failure(let error):
             throw error
@@ -150,13 +165,38 @@ final class MockGmailAPIService: GmailAPIServiceProtocol {
         }
     }
 
-    func sendMessage(accessToken: String, to: String, subject: String, body: String, cc: String?) async throws {
+    func sendMessage(accessToken: String, to: String, subject: String, body: String, cc: String?, bcc: String?) async throws {
         sendMessageCallCount += 1
         lastSendTo = to
         lastSendSubject = subject
         lastSendBody = body
         lastSendCc = cc
+        lastSendBcc = bcc
         if let error = sendMessageError {
+            throw error
+        }
+    }
+
+    func createDraft(accessToken: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws -> String {
+        createDraftCallCount += 1
+        switch createDraftResult {
+        case .success(let id): return id
+        case .failure(let error): throw error
+        }
+    }
+
+    func updateDraft(accessToken: String, draftId: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws {
+        updateDraftCallCount += 1
+        lastDraftId = draftId
+        if let error = updateDraftError {
+            throw error
+        }
+    }
+
+    func deleteDraft(accessToken: String, draftId: String) async throws {
+        deleteDraftCallCount += 1
+        lastDraftId = draftId
+        if let error = deleteDraftError {
             throw error
         }
     }
@@ -193,6 +233,95 @@ final class MockKeychainService: KeychainServiceProtocol {
     }
 }
 
+// MARK: - Mock Persistence Service
+
+final class MockPersistenceService: PersistenceServiceProtocol {
+    var savedAccounts: [PersistableAccount]?
+    var savedSelection: SidebarSelection?
+    var savedCaches: [SidebarSelection: PersistableMailboxCache] = [:]
+    var savedPreferences: UserPreferences?
+
+    var loadAccountsResult: Result<[PersistableAccount], Error> = .success([])
+    var loadSelectionResult: Result<SidebarSelection?, Error> = .success(nil)
+    var loadPreferencesResult: Result<UserPreferences, Error> = .success(.default)
+
+    var saveAccountsCallCount = 0
+    var loadAccountsCallCount = 0
+    var deleteAccountsCallCount = 0
+    var saveSelectionCallCount = 0
+    var loadSelectionCallCount = 0
+    var saveCacheCallCount = 0
+    var loadCacheCallCount = 0
+    var deleteCacheCallCount = 0
+    var deleteAllCachesCallCount = 0
+    var savePreferencesCallCount = 0
+    var loadPreferencesCallCount = 0
+
+    func saveAccounts(_ accounts: [PersistableAccount]) throws {
+        saveAccountsCallCount += 1
+        savedAccounts = accounts
+    }
+
+    func loadAccounts() throws -> [PersistableAccount] {
+        loadAccountsCallCount += 1
+        switch loadAccountsResult {
+        case .success(let accounts): return accounts
+        case .failure(let error): throw error
+        }
+    }
+
+    func deleteAccounts() throws {
+        deleteAccountsCallCount += 1
+        savedAccounts = nil
+    }
+
+    func saveSelection(_ selection: SidebarSelection) throws {
+        saveSelectionCallCount += 1
+        savedSelection = selection
+    }
+
+    func loadSelection() throws -> SidebarSelection? {
+        loadSelectionCallCount += 1
+        switch loadSelectionResult {
+        case .success(let sel): return sel
+        case .failure(let error): throw error
+        }
+    }
+
+    func saveMailboxCache(_ cache: PersistableMailboxCache, for selection: SidebarSelection) throws {
+        saveCacheCallCount += 1
+        savedCaches[selection] = cache
+    }
+
+    func loadMailboxCache(for selection: SidebarSelection) throws -> PersistableMailboxCache? {
+        loadCacheCallCount += 1
+        return savedCaches[selection]
+    }
+
+    func deleteMailboxCache(for selection: SidebarSelection) throws {
+        deleteCacheCallCount += 1
+        savedCaches.removeValue(forKey: selection)
+    }
+
+    func deleteAllMailboxCaches() throws {
+        deleteAllCachesCallCount += 1
+        savedCaches.removeAll()
+    }
+
+    func savePreferences(_ preferences: UserPreferences) throws {
+        savePreferencesCallCount += 1
+        savedPreferences = preferences
+    }
+
+    func loadPreferences() throws -> UserPreferences {
+        loadPreferencesCallCount += 1
+        switch loadPreferencesResult {
+        case .success(let prefs): return prefs
+        case .failure(let error): throw error
+        }
+    }
+}
+
 // MARK: - Test Helpers
 
 extension Account {
@@ -202,6 +331,15 @@ extension Account {
         displayName: "Test User",
         accessToken: "test-access-token",
         refreshToken: "test-refresh-token",
+        tokenExpiry: Date().addingTimeInterval(3600)
+    )
+
+    static let testAccount2 = Account(
+        id: "test-456",
+        email: "second@gmail.com",
+        displayName: "Second User",
+        accessToken: "test-access-token-2",
+        refreshToken: "test-refresh-token-2",
         tokenExpiry: Date().addingTimeInterval(3600)
     )
 
@@ -221,6 +359,16 @@ extension Account {
         accessToken: nil,
         refreshToken: nil,
         tokenExpiry: nil
+    )
+
+    static let inactiveAccount = Account(
+        id: "inactive-101",
+        email: "inactive@gmail.com",
+        displayName: "Inactive User",
+        accessToken: "inactive-token",
+        refreshToken: "inactive-refresh",
+        tokenExpiry: Date().addingTimeInterval(3600),
+        isActive: false
     )
 }
 

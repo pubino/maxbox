@@ -1,6 +1,70 @@
 import Foundation
 
-enum MailboxType: String, CaseIterable, Identifiable, Codable {
+enum SidebarSelection: Hashable, Codable {
+    case allAccounts(MailboxType)
+    case account(MailboxType, accountId: String)
+
+    var mailboxType: MailboxType {
+        switch self {
+        case .allAccounts(let type): return type
+        case .account(let type, _): return type
+        }
+    }
+
+    var accountId: String? {
+        switch self {
+        case .allAccounts: return nil
+        case .account(_, let id): return id
+        }
+    }
+
+    var cacheKey: String {
+        switch self {
+        case .allAccounts(let type):
+            return "allAccounts_\(type.rawValue)"
+        case .account(let type, let id):
+            return "account_\(id)_\(type.rawValue)"
+        }
+    }
+
+    // MARK: - Codable
+
+    private enum CodingKeys: String, CodingKey {
+        case kind, mailboxType, accountId
+    }
+
+    private enum Kind: String, Codable {
+        case allAccounts, account
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let kind = try container.decode(Kind.self, forKey: .kind)
+        let type = try container.decode(MailboxType.self, forKey: .mailboxType)
+        switch kind {
+        case .allAccounts:
+            self = .allAccounts(type)
+        case .account:
+            let id = try container.decode(String.self, forKey: .accountId)
+            self = .account(type, accountId: id)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .allAccounts(let type):
+            try container.encode(Kind.allAccounts, forKey: .kind)
+            try container.encode(type, forKey: .mailboxType)
+        case .account(let type, let id):
+            try container.encode(Kind.account, forKey: .kind)
+            try container.encode(type, forKey: .mailboxType)
+            try container.encode(id, forKey: .accountId)
+        }
+    }
+}
+
+enum MailboxType: String, CaseIterable, Identifiable, Codable, Hashable {
     case inbox = "INBOX"
     case starred = "STARRED"
     case drafts = "DRAFT"

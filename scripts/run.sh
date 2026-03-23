@@ -1,38 +1,28 @@
 #!/bin/zsh
 # MaxBox - Build and run script
-# Usage: MAXBOX_GMAIL_CLIENT_ID=... MAXBOX_GMAIL_CLIENT_SECRET=... ./scripts/run.sh
+# Credentials are read from Secrets.xcconfig at build time (baked into Info.plist).
+# Usage: ./scripts/run.sh
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-PROJECT="$PROJECT_DIR/MaxBox.xcodeproj"
-SCHEME="MaxBox"
 
-# Check for required env vars
-if [[ -z "${MAXBOX_GMAIL_CLIENT_ID:-}" ]]; then
-    echo "Warning: MAXBOX_GMAIL_CLIENT_ID is not set. OAuth sign-in will fail."
-    echo "See GCP_SETUP.md for instructions."
+# Check that Secrets.xcconfig exists (needed at build time)
+if [[ ! -f "$PROJECT_DIR/Secrets.xcconfig" ]]; then
+    echo "Error: Secrets.xcconfig not found."
+    echo ""
+    echo "Run ./scripts/gcp-setup.sh to create it, or copy the template:"
+    echo "  cp Secrets.xcconfig.template Secrets.xcconfig"
+    echo "  # Then fill in your OAuth credentials"
+    echo ""
+    echo "See GCP_SETUP.md for full instructions."
+    exit 1
 fi
 
-if [[ -z "${MAXBOX_GMAIL_CLIENT_SECRET:-}" ]]; then
-    echo "Warning: MAXBOX_GMAIL_CLIENT_SECRET is not set. OAuth sign-in will fail."
-    echo "See GCP_SETUP.md for instructions."
-fi
+"$SCRIPT_DIR/build.sh"
 
-echo "Building MaxBox..."
-xcodebuild \
-    -project "$PROJECT" \
-    -scheme "$SCHEME" \
-    -configuration Debug \
-    build \
-    2>&1 | tail -3
-
-# Find and launch the built app
-BUILD_DIR=$(xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Debug -showBuildSettings 2>/dev/null \
-    | grep -m1 'BUILT_PRODUCTS_DIR' | awk '{print $3}')
-
-APP_PATH="$BUILD_DIR/MaxBox.app"
+APP_PATH="$PROJECT_DIR/build/Debug/MaxBox.app"
 
 if [[ -d "$APP_PATH" ]]; then
     echo "Launching MaxBox..."

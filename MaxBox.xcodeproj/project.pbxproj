@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02BBC267AC594B12C30A164D /* HTMLContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A285FF972878B2A62635596D /* HTMLContentView.swift */; };
 		0E03123A8AB7BD80D45CB0DE /* KeychainServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C12C99AC050770C4C331E9 /* KeychainServiceTests.swift */; };
+		0F3F9EB308DA3F079D4892D9 /* PersistableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D4F22C0748E60DA7F29BD4 /* PersistableTypes.swift */; };
 		168F5F863D111E20A9D84979 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EAF8921D65F0450E5745DA /* Mailbox.swift */; };
+		19018A1AA2732C1F81B751E7 /* MailActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A85D4CA237C5CAD4A75C86 /* MailActivity.swift */; };
 		198128DCFF446EC6BD54496D /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA635C72F0C365C0E2DCE1E5 /* AuthenticationService.swift */; };
 		1ED8B1E96CFF4A2AD6FEF379 /* MessageDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34081BFBEC59094FB41FA58 /* MessageDetailViewModelTests.swift */; };
 		2B617127D3A5915A78E4799D /* MailboxViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D042F3723EF07D65BA6C7BE5 /* MailboxViewModel.swift */; };
@@ -18,10 +21,16 @@
 		448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7135D1D01A7A5F3145255A9 /* ComposeView.swift */; };
 		4CDC7E56DBB36A7583B8E21E /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6277A6BB009A972D283E5 /* ModelTests.swift */; };
 		520CADF51198386CF0FF6BE6 /* MailboxViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */; };
+		550E91C29C71C709D5E51145 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E7FB14E2B1A064AEA22AC45 /* SettingsView.swift */; };
 		748D59798F120AF188FC743C /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAF96DFB986E52D88C1FB75D /* Message.swift */; };
+		7792D4A7B1B1F1F274D2B03F /* ActivityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DE55873A18B1FFA1CC3864 /* ActivityManagerTests.swift */; };
 		7841962CE3933A218A63D7CB /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014706504B6AEFFE9BAAFA37 /* KeychainService.swift */; };
+		88B6120D60339483F1C89143 /* PersistenceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15AFFF015DC1DC24A48CDF44 /* PersistenceServiceTests.swift */; };
 		8C4F69A0B3CE1408B206CA21 /* ComposeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */; };
+		99DF56F58CC23CE9ED41CD74 /* ActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF13EC7EA2C6BE9D4CE3AD7 /* ActivityManager.swift */; };
 		9E395C6214107F163596504E /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA71386B5DD351520210BB58 /* Account.swift */; };
+		A94C52E9C23D23771793A299 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826EDD6A0FF472052AEFF9FF /* PersistenceService.swift */; };
+		ACD3382AD6E34EE926D7467C /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C0E9CD0620A165B2BCB25E /* ActivityView.swift */; };
 		AD61FCBBFB2F2ADFCDE57D75 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DFCA78F31D5F9D53368D74 /* SearchBar.swift */; };
 		BBA473751ED71D1B02928811 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A15E9550B62121DD0872C01 /* ContentView.swift */; };
 		C3D72772C436F41755AD757E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C29ACB10FD3A8159A4990EBF /* Assets.xcassets */; };
@@ -46,13 +55,20 @@
 
 /* Begin PBXFileReference section */
 		014706504B6AEFFE9BAAFA37 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		04D4F22C0748E60DA7F29BD4 /* PersistableTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistableTypes.swift; sourceTree = "<group>"; };
+		0E7FB14E2B1A064AEA22AC45 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		15AFFF015DC1DC24A48CDF44 /* PersistenceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceServiceTests.swift; sourceTree = "<group>"; };
 		29DFCA78F31D5F9D53368D74 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		3250A21FAB8C58D991E027EC /* MessageListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListViewModelTests.swift; sourceTree = "<group>"; };
+		375C6709331F681AE5FCA79C /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		48293CB6569ED00FED9861F7 /* MessageListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListViewModel.swift; sourceTree = "<group>"; };
 		4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
 		6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeViewModel.swift; sourceTree = "<group>"; };
+		6AF13EC7EA2C6BE9D4CE3AD7 /* ActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManager.swift; sourceTree = "<group>"; };
 		6BDAE73D9403CA8A1DDB8EBB /* MessageDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewModel.swift; sourceTree = "<group>"; };
 		7001A189174EAF081AF3F87C /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		70C0E9CD0620A165B2BCB25E /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		826EDD6A0FF472052AEFF9FF /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		8A15E9550B62121DD0872C01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8C148A4568F0BCE4526E66C7 /* MaxBox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MaxBox.entitlements; sourceTree = "<group>"; };
 		8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailboxViewModelTests.swift; sourceTree = "<group>"; };
@@ -61,6 +77,8 @@
 		95F6277A6BB009A972D283E5 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		9A7B8FB0850E66251A95F4CD /* MaxBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MaxBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E1F17686C36FBAB9AF39D95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A1A85D4CA237C5CAD4A75C86 /* MailActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailActivity.swift; sourceTree = "<group>"; };
+		A285FF972878B2A62635596D /* HTMLContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLContentView.swift; sourceTree = "<group>"; };
 		A7135D1D01A7A5F3145255A9 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
 		BAF96DFB986E52D88C1FB75D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		C29ACB10FD3A8159A4990EBF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,6 +86,7 @@
 		CBF636A1ABDDD65EE3F2EBF8 /* MessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailView.swift; sourceTree = "<group>"; };
 		D042F3723EF07D65BA6C7BE5 /* MailboxViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailboxViewModel.swift; sourceTree = "<group>"; };
 		D0D804ECD39DA20BA43785A6 /* MaxBoxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MaxBoxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1DE55873A18B1FFA1CC3864 /* ActivityManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityManagerTests.swift; sourceTree = "<group>"; };
 		D34081BFBEC59094FB41FA58 /* MessageDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailViewModelTests.swift; sourceTree = "<group>"; };
 		DB86BE739BFBA68DA843860E /* MaxBoxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBoxApp.swift; sourceTree = "<group>"; };
 		EA635C72F0C365C0E2DCE1E5 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
@@ -81,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				B6D37F1CC4A8125CBB1A50CB /* MaxBox */,
+				A0DC29148D2B3D38BB249406 /* maxbox */,
 				DB9E013FE38B18CD5F55A516 /* MaxBoxTests */,
 				7662C9764DACCE582F5F6280 /* Products */,
 			);
@@ -89,11 +109,14 @@
 		15501C68D77529BB71FD5C72 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				70C0E9CD0620A165B2BCB25E /* ActivityView.swift */,
 				A7135D1D01A7A5F3145255A9 /* ComposeView.swift */,
 				8A15E9550B62121DD0872C01 /* ContentView.swift */,
+				A285FF972878B2A62635596D /* HTMLContentView.swift */,
 				CBF636A1ABDDD65EE3F2EBF8 /* MessageDetailView.swift */,
 				4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */,
 				29DFCA78F31D5F9D53368D74 /* SearchBar.swift */,
+				0E7FB14E2B1A064AEA22AC45 /* SettingsView.swift */,
 				7001A189174EAF081AF3F87C /* SidebarView.swift */,
 			);
 			path = Views;
@@ -103,8 +126,10 @@
 			isa = PBXGroup;
 			children = (
 				CA71386B5DD351520210BB58 /* Account.swift */,
+				A1A85D4CA237C5CAD4A75C86 /* MailActivity.swift */,
 				F5EAF8921D65F0450E5745DA /* Mailbox.swift */,
 				BAF96DFB986E52D88C1FB75D /* Message.swift */,
+				04D4F22C0748E60DA7F29BD4 /* PersistableTypes.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -115,6 +140,7 @@
 				EA635C72F0C365C0E2DCE1E5 /* AuthenticationService.swift */,
 				9264CDBF870E982A25B676F8 /* GmailAPIService.swift */,
 				014706504B6AEFFE9BAAFA37 /* KeychainService.swift */,
+				826EDD6A0FF472052AEFF9FF /* PersistenceService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -126,6 +152,15 @@
 				D0D804ECD39DA20BA43785A6 /* MaxBoxTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A0DC29148D2B3D38BB249406 /* maxbox */ = {
+			isa = PBXGroup;
+			children = (
+				375C6709331F681AE5FCA79C /* Secrets.xcconfig */,
+			);
+			name = maxbox;
+			path = .;
 			sourceTree = "<group>";
 		};
 		B6D37F1CC4A8125CBB1A50CB /* MaxBox */ = {
@@ -146,6 +181,7 @@
 		DB9E013FE38B18CD5F55A516 /* MaxBoxTests */ = {
 			isa = PBXGroup;
 			children = (
+				D1DE55873A18B1FFA1CC3864 /* ActivityManagerTests.swift */,
 				FF018688BFBB417132AE9520 /* ComposeViewModelTests.swift */,
 				91C12C99AC050770C4C331E9 /* KeychainServiceTests.swift */,
 				8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */,
@@ -153,6 +189,7 @@
 				3250A21FAB8C58D991E027EC /* MessageListViewModelTests.swift */,
 				FFE31F3518737D1F6DEE0EF0 /* Mocks.swift */,
 				95F6277A6BB009A972D283E5 /* ModelTests.swift */,
+				15AFFF015DC1DC24A48CDF44 /* PersistenceServiceTests.swift */,
 			);
 			path = MaxBoxTests;
 			sourceTree = "<group>";
@@ -160,6 +197,7 @@
 		E02D1216735555FFA14B1E3C /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				6AF13EC7EA2C6BE9D4CE3AD7 /* ActivityManager.swift */,
 				6AAA20A6C44143E3767470AD /* ComposeViewModel.swift */,
 				D042F3723EF07D65BA6C7BE5 /* MailboxViewModel.swift */,
 				6BDAE73D9403CA8A1DDB8EBB /* MessageDetailViewModel.swift */,
@@ -252,6 +290,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7792D4A7B1B1F1F274D2B03F /* ActivityManagerTests.swift in Sources */,
 				CD823AD834594D3FCF26D48D /* ComposeViewModelTests.swift in Sources */,
 				0E03123A8AB7BD80D45CB0DE /* KeychainServiceTests.swift in Sources */,
 				520CADF51198386CF0FF6BE6 /* MailboxViewModelTests.swift in Sources */,
@@ -259,6 +298,7 @@
 				DD484B270B34FE28D67876A0 /* MessageListViewModelTests.swift in Sources */,
 				3F2F19F407A3CFF68F5B9260 /* Mocks.swift in Sources */,
 				4CDC7E56DBB36A7583B8E21E /* ModelTests.swift in Sources */,
+				88B6120D60339483F1C89143 /* PersistenceServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,12 +307,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E395C6214107F163596504E /* Account.swift in Sources */,
+				99DF56F58CC23CE9ED41CD74 /* ActivityManager.swift in Sources */,
+				ACD3382AD6E34EE926D7467C /* ActivityView.swift in Sources */,
 				198128DCFF446EC6BD54496D /* AuthenticationService.swift in Sources */,
 				448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */,
 				8C4F69A0B3CE1408B206CA21 /* ComposeViewModel.swift in Sources */,
 				BBA473751ED71D1B02928811 /* ContentView.swift in Sources */,
 				32E9C3F65CFEBDC135CB0739 /* GmailAPIService.swift in Sources */,
+				02BBC267AC594B12C30A164D /* HTMLContentView.swift in Sources */,
 				7841962CE3933A218A63D7CB /* KeychainService.swift in Sources */,
+				19018A1AA2732C1F81B751E7 /* MailActivity.swift in Sources */,
 				168F5F863D111E20A9D84979 /* Mailbox.swift in Sources */,
 				2B617127D3A5915A78E4799D /* MailboxViewModel.swift in Sources */,
 				E3884BCA8142EBDA068189BD /* MaxBoxApp.swift in Sources */,
@@ -281,7 +325,10 @@
 				2E66DD3B11FC2D8E6459675F /* MessageDetailViewModel.swift in Sources */,
 				DDB64A10AB1D81C9329BD09E /* MessageListView.swift in Sources */,
 				CDC1492C09B8C1DC6B5E6310 /* MessageListViewModel.swift in Sources */,
+				0F3F9EB308DA3F079D4892D9 /* PersistableTypes.swift in Sources */,
+				A94C52E9C23D23771793A299 /* PersistenceService.swift in Sources */,
 				AD61FCBBFB2F2ADFCDE57D75 /* SearchBar.swift in Sources */,
+				550E91C29C71C709D5E51145 /* SettingsView.swift in Sources */,
 				D9FB698D49DBB0178465164E /* SidebarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,6 +346,7 @@
 /* Begin XCBuildConfiguration section */
 		7D32F3D593A825CD87265466 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 375C6709331F681AE5FCA79C /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MaxBox/MaxBox.entitlements;
@@ -389,6 +437,7 @@
 		};
 		CAEE40A23CA9328F414E2847 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 375C6709331F681AE5FCA79C /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MaxBox/MaxBox.entitlements;

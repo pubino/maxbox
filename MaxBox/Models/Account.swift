@@ -7,6 +7,7 @@ struct Account: Identifiable, Codable, Hashable {
     var accessToken: String?
     var refreshToken: String?
     var tokenExpiry: Date?
+    var isActive: Bool = true
 
     var isAuthenticated: Bool {
         accessToken != nil && refreshToken != nil

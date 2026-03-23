@@ -16,13 +16,20 @@ enum GmailAPIError: Error, LocalizedError {
     }
 }
 
+struct DraftResponse: Decodable {
+    let id: String
+}
+
 protocol GmailAPIServiceProtocol {
     func listMessages(accessToken: String, labelId: String, query: String?, pageToken: String?, maxResults: Int) async throws -> MessageListResponse
     func getMessage(accessToken: String, messageId: String) async throws -> Message
     func modifyMessage(accessToken: String, messageId: String, addLabels: [String], removeLabels: [String]) async throws
     func trashMessage(accessToken: String, messageId: String) async throws
     func archiveMessage(accessToken: String, messageId: String) async throws
-    func sendMessage(accessToken: String, to: String, subject: String, body: String, cc: String?) async throws
+    func sendMessage(accessToken: String, to: String, subject: String, body: String, cc: String?, bcc: String?) async throws
+    func createDraft(accessToken: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws -> String
+    func updateDraft(accessToken: String, draftId: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws
+    func deleteDraft(accessToken: String, draftId: String) async throws
 }
 
 final class GmailAPIService: GmailAPIServiceProtocol {
@@ -117,23 +124,9 @@ final class GmailAPIService: GmailAPIServiceProtocol {
         )
     }
 
-    func sendMessage(accessToken: String, to: String, subject: String, body: String, cc: String? = nil) async throws {
+    func sendMessage(accessToken: String, to: String, subject: String, body: String, cc: String? = nil, bcc: String? = nil) async throws {
         let url = URL(string: "\(baseURL)/messages/send")!
-
-        var rawMessage = "To: \(to)\r\n"
-        if let cc = cc, !cc.isEmpty {
-            rawMessage += "Cc: \(cc)\r\n"
-        }
-        rawMessage += "Subject: \(subject)\r\n"
-        rawMessage += "Content-Type: text/plain; charset=utf-8\r\n"
-        rawMessage += "\r\n"
-        rawMessage += body
-
-        let encodedMessage = rawMessage.data(using: .utf8)!
-            .base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
+        let encodedMessage = buildRawMessage(to: to, cc: cc, bcc: bcc, subject: subject, body: body)
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -147,7 +140,73 @@ final class GmailAPIService: GmailAPIServiceProtocol {
         try validateResponse(response, data: data)
     }
 
+    func createDraft(accessToken: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws -> String {
+        let url = URL(string: "\(baseURL)/drafts")!
+        let encodedMessage = buildRawMessage(to: to, cc: cc, bcc: bcc, subject: subject, body: body)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let payload: [String: Any] = ["message": ["raw": encodedMessage]]
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await session.data(for: request)
+        try validateResponse(response, data: data)
+
+        let draft = try JSONDecoder().decode(DraftResponse.self, from: data)
+        return draft.id
+    }
+
+    func updateDraft(accessToken: String, draftId: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws {
+        let url = URL(string: "\(baseURL)/drafts/\(draftId)")!
+        let encodedMessage = buildRawMessage(to: to, cc: cc, bcc: bcc, subject: subject, body: body)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let payload: [String: Any] = ["message": ["raw": encodedMessage]]
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await session.data(for: request)
+        try validateResponse(response, data: data)
+    }
+
+    func deleteDraft(accessToken: String, draftId: String) async throws {
+        let url = URL(string: "\(baseURL)/drafts/\(draftId)")!
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await session.data(for: request)
+        try validateResponse(response, data: data)
+    }
+
     // MARK: - Private
+
+    private func buildRawMessage(to: String, cc: String?, bcc: String? = nil, subject: String, body: String) -> String {
+        var rawMessage = "To: \(to)\r\n"
+        if let cc = cc, !cc.isEmpty {
+            rawMessage += "Cc: \(cc)\r\n"
+        }
+        if let bcc = bcc, !bcc.isEmpty {
+            rawMessage += "Bcc: \(bcc)\r\n"
+        }
+        rawMessage += "Subject: \(subject)\r\n"
+        rawMessage += "Content-Type: text/plain; charset=utf-8\r\n"
+        rawMessage += "\r\n"
+        rawMessage += body
+
+        return rawMessage.data(using: .utf8)!
+            .base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+    }
 
     private func validateResponse(_ response: URLResponse, data: Data) throws {
         guard let httpResponse = response as? HTTPURLResponse else { return }
@@ -180,7 +239,7 @@ final class GmailAPIService: GmailAPIServiceProtocol {
             date = Date()
         }
 
-        let body = extractBody(from: gmail.payload)
+        let bodyContent = extractBody(from: gmail.payload)
         let labels = gmail.labelIds ?? []
         let isRead = !labels.contains("UNREAD")
         let isStarred = labels.contains("STARRED")
@@ -194,47 +253,57 @@ final class GmailAPIService: GmailAPIServiceProtocol {
             cc: ccAddresses,
             date: date,
             snippet: gmail.snippet ?? "",
-            body: body,
+            body: bodyContent.plainText,
+            bodyHTML: bodyContent.html,
             isRead: isRead,
             isStarred: isStarred,
             labelIds: labels
         )
     }
 
-    private func extractBody(from payload: GmailPayload?) -> String {
-        guard let payload = payload else { return "" }
+    private func extractBody(from payload: GmailPayload?) -> (plainText: String, html: String?) {
+        guard let payload = payload else { return ("", nil) }
 
-        // Check for plain text body directly
+        var plainText: String?
+        var html: String?
+
+        // Single-part message
         if payload.mimeType == "text/plain", let data = payload.body?.data {
-            return decodeBase64URL(data)
+            return (decodeBase64URL(data), nil)
+        }
+        if payload.mimeType == "text/html", let data = payload.body?.data {
+            let decoded = decodeBase64URL(data)
+            return ("", decoded)
         }
 
-        // Check parts for text/plain
+        // Multi-part: collect both plain and HTML
         if let parts = payload.parts {
             for part in parts {
-                if part.mimeType == "text/plain", let data = part.body?.data {
-                    return decodeBase64URL(data)
+                if part.mimeType == "text/plain", let data = part.body?.data, plainText == nil {
+                    plainText = decodeBase64URL(data)
+                }
+                if part.mimeType == "text/html", let data = part.body?.data, html == nil {
+                    html = decodeBase64URL(data)
                 }
             }
-            // Fallback to text/html
-            for part in parts {
-                if part.mimeType == "text/html", let data = part.body?.data {
-                    return decodeBase64URL(data)
-                }
-            }
-            // Check nested parts
-            for part in parts {
-                if let nestedParts = part.parts {
-                    for nested in nestedParts {
-                        if nested.mimeType == "text/plain", let data = nested.body?.data {
-                            return decodeBase64URL(data)
+            // Check nested parts (e.g. multipart/alternative inside multipart/mixed)
+            if plainText == nil || html == nil {
+                for part in parts {
+                    if let nestedParts = part.parts {
+                        for nested in nestedParts {
+                            if nested.mimeType == "text/plain", let data = nested.body?.data, plainText == nil {
+                                plainText = decodeBase64URL(data)
+                            }
+                            if nested.mimeType == "text/html", let data = nested.body?.data, html == nil {
+                                html = decodeBase64URL(data)
+                            }
                         }
                     }
                 }
             }
         }
 
-        return ""
+        return (plainText ?? "", html)
     }
 
     private func decodeBase64URL(_ encoded: String) -> String {

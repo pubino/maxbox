@@ -19,6 +19,7 @@ Packages/
 
 # OAuth credentials
 scripts/.env.local
+Secrets.xcconfig
 
 # Ralph internals (keep .ralph/agent state files)
 .ralph/diagnostics/

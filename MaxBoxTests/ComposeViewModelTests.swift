@@ -12,16 +12,25 @@ final class ComposeViewModelTests: XCTestCase {
         sut = ComposeViewModel(gmailService: mockGmail)
     }
 
+    override func tearDown() {
+        sut.stopAutoSave()
+        super.tearDown()
+    }
+
     // MARK: - Initial State
 
     func testInitialState() {
         XCTAssertEqual(sut.to, "")
         XCTAssertEqual(sut.cc, "")
+        XCTAssertEqual(sut.bcc, "")
         XCTAssertEqual(sut.subject, "")
         XCTAssertEqual(sut.body, "")
         XCTAssertFalse(sut.isSending)
         XCTAssertNil(sut.errorMessage)
         XCTAssertFalse(sut.didSend)
+        XCTAssertFalse(sut.isDirty)
+        XCTAssertNil(sut.draftId)
+        XCTAssertFalse(sut.showCloseConfirmation)
     }
 
     // MARK: - Validation
@@ -52,6 +61,48 @@ final class ComposeViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isValid)
     }
 
+    // MARK: - Dirty Tracking
+
+    func testIsDirty_tracksFieldChanges() {
+        XCTAssertFalse(sut.isDirty)
+
+        sut.to = "alice@example.com"
+        XCTAssertTrue(sut.isDirty)
+    }
+
+    func testIsDirty_tracksSubjectChange() {
+        sut.subject = "Hello"
+        XCTAssertTrue(sut.isDirty)
+    }
+
+    func testIsDirty_tracksBodyChange() {
+        sut.body = "Some content"
+        XCTAssertTrue(sut.isDirty)
+    }
+
+    func testIsDirty_tracksCcChange() {
+        sut.cc = "bob@example.com"
+        XCTAssertTrue(sut.isDirty)
+    }
+
+    func testIsDirty_tracksBccChange() {
+        sut.bcc = "secret@example.com"
+        XCTAssertTrue(sut.isDirty)
+    }
+
+    func testReset_clearsDirty() {
+        sut.to = "alice@example.com"
+        XCTAssertTrue(sut.isDirty)
+
+        sut.reset()
+        XCTAssertFalse(sut.isDirty)
+    }
+
+    func testReset_doesNotSetDirty() {
+        sut.reset()
+        XCTAssertFalse(sut.isDirty)
+    }
+
     // MARK: - Send
 
     func testSend_success() async {
@@ -72,6 +123,17 @@ final class ComposeViewModelTests: XCTestCase {
         XCTAssertEqual(mockGmail.lastSendCc, "bob@example.com")
     }
 
+    func testSend_withBcc() async {
+        sut.to = "alice@example.com"
+        sut.subject = "Hello"
+        sut.bcc = "hidden@example.com"
+
+        await sut.send(accessToken: "token")
+
+        XCTAssertTrue(sut.didSend)
+        XCTAssertEqual(mockGmail.lastSendBcc, "hidden@example.com")
+    }
+
     func testSend_emptyCc_sendsNil() async {
         sut.to = "alice@example.com"
         sut.subject = "Hello"
@@ -80,10 +142,10 @@ final class ComposeViewModelTests: XCTestCase {
 
         XCTAssertTrue(sut.didSend)
         XCTAssertNil(mockGmail.lastSendCc)
+        XCTAssertNil(mockGmail.lastSendBcc)
     }
 
     func testSend_invalidForm_setsError() async {
-        // to and subject are empty
         await sut.send(accessToken: "token")
 
         XCTAssertFalse(sut.didSend)
@@ -103,11 +165,154 @@ final class ComposeViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isSending)
     }
 
+    func testSend_deletesDraftAfterSend() async {
+        // First save a draft to get a draftId
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        sut.subject = "Hello"
+        await sut.saveDraft()
+        XCTAssertNotNil(sut.draftId)
+
+        // Now send
+        await sut.send(accessToken: "token")
+
+        XCTAssertTrue(sut.didSend)
+        XCTAssertEqual(mockGmail.deleteDraftCallCount, 1)
+        XCTAssertNil(sut.draftId)
+    }
+
+    func testSend_noDraft_noDeleteCall() async {
+        sut.to = "alice@example.com"
+        sut.subject = "Hello"
+
+        await sut.send(accessToken: "token")
+
+        XCTAssertTrue(sut.didSend)
+        XCTAssertEqual(mockGmail.deleteDraftCallCount, 0)
+    }
+
+    // MARK: - Save Draft
+
+    func testSaveDraft_creates_whenNoDraftId() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        sut.subject = "Draft Subject"
+
+        await sut.saveDraft()
+
+        XCTAssertEqual(mockGmail.createDraftCallCount, 1)
+        XCTAssertEqual(mockGmail.updateDraftCallCount, 0)
+        XCTAssertEqual(sut.draftId, "mock-draft-id")
+    }
+
+    func testSaveDraft_updates_whenDraftIdExists() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        sut.subject = "Draft Subject"
+
+        // First create
+        await sut.saveDraft()
+        XCTAssertEqual(mockGmail.createDraftCallCount, 1)
+
+        // Modify and save again
+        sut.subject = "Updated Subject"
+        await sut.saveDraft()
+
+        XCTAssertEqual(mockGmail.createDraftCallCount, 1)
+        XCTAssertEqual(mockGmail.updateDraftCallCount, 1)
+        XCTAssertEqual(mockGmail.lastDraftId, "mock-draft-id")
+    }
+
+    func testSaveDraft_setsDirtyFalse() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        XCTAssertTrue(sut.isDirty)
+
+        await sut.saveDraft()
+
+        XCTAssertFalse(sut.isDirty)
+    }
+
+    func testSaveDraft_setsDraftSavedAt() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        XCTAssertNil(sut.draftSavedAt)
+
+        await sut.saveDraft()
+
+        XCTAssertNotNil(sut.draftSavedAt)
+    }
+
+    func testSaveDraft_noAccessToken_doesNothing() async {
+        sut.to = "alice@example.com"
+
+        await sut.saveDraft()
+
+        XCTAssertEqual(mockGmail.createDraftCallCount, 0)
+    }
+
+    // MARK: - Close Flow
+
+    func testRequestClose_dirtyWithContent_showsConfirmation() {
+        sut.to = "alice@example.com"
+        XCTAssertTrue(sut.isDirty)
+        XCTAssertTrue(sut.hasContent)
+
+        let shouldDismiss = sut.requestClose()
+
+        XCTAssertFalse(shouldDismiss)
+        XCTAssertTrue(sut.showCloseConfirmation)
+    }
+
+    func testRequestClose_clean_dismissesDirectly() {
+        let shouldDismiss = sut.requestClose()
+
+        XCTAssertTrue(shouldDismiss)
+        XCTAssertFalse(sut.showCloseConfirmation)
+    }
+
+    func testRequestClose_dirtyButNoContent_dismissesDirectly() {
+        // Set to empty string after init doesn't count as content
+        // But didSet will mark dirty — however hasContent is false
+        // Actually setting to = "" triggers didSet but content is empty
+        // Let's test: set to something, save draft (clears dirty), then set to empty
+        sut.to = ""
+        // isDirty is true because didSet fired, but hasContent is false
+        let shouldDismiss = sut.requestClose()
+        // isDirty is true but hasContent is false — should dismiss
+        XCTAssertTrue(shouldDismiss)
+        XCTAssertFalse(sut.showCloseConfirmation)
+    }
+
+    // MARK: - Discard Draft
+
+    func testDiscardDraft_deletesDraftIfExists() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        await sut.saveDraft()
+        XCTAssertNotNil(sut.draftId)
+
+        await sut.discardDraft()
+
+        XCTAssertEqual(mockGmail.deleteDraftCallCount, 1)
+        XCTAssertNil(sut.draftId)
+    }
+
+    func testDiscardDraft_noDraftId_noApiCall() async {
+        sut.accessToken = "token"
+        XCTAssertNil(sut.draftId)
+
+        await sut.discardDraft()
+
+        XCTAssertEqual(mockGmail.deleteDraftCallCount, 0)
+    }
+
     // MARK: - Reset
 
     func testReset() {
         sut.to = "alice@example.com"
         sut.cc = "bob@example.com"
+        sut.bcc = "secret@example.com"
         sut.subject = "Hello"
         sut.body = "World"
         sut.errorMessage = "Some error"
@@ -117,9 +322,40 @@ final class ComposeViewModelTests: XCTestCase {
 
         XCTAssertEqual(sut.to, "")
         XCTAssertEqual(sut.cc, "")
+        XCTAssertEqual(sut.bcc, "")
         XCTAssertEqual(sut.subject, "")
         XCTAssertEqual(sut.body, "")
         XCTAssertNil(sut.errorMessage)
         XCTAssertFalse(sut.didSend)
+        XCTAssertNil(sut.draftId)
+        XCTAssertFalse(sut.isDirty)
+    }
+
+    // MARK: - hasContent
+
+    func testHasContent_emptyFields_returnsFalse() {
+        XCTAssertFalse(sut.hasContent)
+    }
+
+    func testHasContent_withTo_returnsTrue() {
+        sut.to = "alice@example.com"
+        XCTAssertTrue(sut.hasContent)
+    }
+
+    func testHasContent_withSubjectOnly_returnsTrue() {
+        sut.subject = "Subject"
+        XCTAssertTrue(sut.hasContent)
+    }
+
+    func testHasContent_withBodyOnly_returnsTrue() {
+        sut.body = "Some text"
+        XCTAssertTrue(sut.hasContent)
+    }
+
+    func testHasContent_whitespaceOnly_returnsFalse() {
+        sut.to = "   "
+        sut.subject = "   "
+        sut.body = "   "
+        XCTAssertFalse(sut.hasContent)
     }
 }

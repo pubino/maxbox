@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x:*)",
+      "Bash(zsh:*)",
+      "Bash(tail:*)",
+      "Bash(gh repo:*)",
+      "Bash(git remote add origin https://github.com/pubino/maxbox.git 2>&1 || git remote set-url origin https://github.com/pubino/maxbox.git 2>&1)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git filter-repo:*)",
+      "Bash(git remote add origin https://github.com/pubino/maxbox.git && git push --force -u origin main 2>&1)",
+      "Bash(head:*)",
+      "Bash(xcodebuild build-for-testing:*)",
+      "Bash(xcodebuild test:*)",
+      "Bash(xcodegen generate:*)",
+      "Bash(grep:*)",
+      "Bash(git check-ignore:*)",
+      "WebSearch",
+      "WebFetch(domain:developers.google.com)",
+      "Bash(xcodebuild build:*)",
+      "Bash(./scripts/build.sh:*)",
+      "Bash(./scripts/test.sh:*)",
+      "Bash(pkill:*)"
+    ]
+  }
+}
