@@ -47,10 +47,17 @@ struct MessageListView: View {
                         .tag(message.id)
                         .simultaneousGesture(TapGesture(count: 2).onEnded {
                             let accountId = message.accountId ?? mailboxVM.selectedAccountId ?? ""
-                            openWindow(id: "message", value: MessageWindowContext(
-                                messageId: message.id,
-                                accountId: accountId
-                            ))
+                            if message.isDraft {
+                                openWindow(id: "compose-draft", value: DraftComposeContext(
+                                    messageId: message.id,
+                                    accountId: accountId
+                                ))
+                            } else {
+                                openWindow(id: "message", value: MessageWindowContext(
+                                    messageId: message.id,
+                                    accountId: accountId
+                                ))
+                            }
                         })
                     }
                 }

@@ -21,6 +21,7 @@
 		3F2F19F407A3CFF68F5B9260 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE31F3518737D1F6DEE0EF0 /* Mocks.swift */; };
 		448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7135D1D01A7A5F3145255A9 /* ComposeView.swift */; };
 		4CDC7E56DBB36A7583B8E21E /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6277A6BB009A972D283E5 /* ModelTests.swift */; };
+		517B785D39CAEC30886EA571 /* DraftComposeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8A10D68117671FBF2132A2 /* DraftComposeTests.swift */; };
 		520CADF51198386CF0FF6BE6 /* MailboxViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */; };
 		550E91C29C71C709D5E51145 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E7FB14E2B1A064AEA22AC45 /* SettingsView.swift */; };
 		585B75A2F0B90A8F149293BF /* SearchBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01602CC280F0925ED6C03566 /* SearchBarTests.swift */; };
@@ -42,6 +43,7 @@
 		CDC1492C09B8C1DC6B5E6310 /* MessageListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48293CB6569ED00FED9861F7 /* MessageListViewModel.swift */; };
 		D371A9601DD4CD7A8ED86F61 /* MessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF636A1ABDDD65EE3F2EBF8 /* MessageDetailView.swift */; };
 		D9FB698D49DBB0178465164E /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7001A189174EAF081AF3F87C /* SidebarView.swift */; };
+		DC8E9CDBC5DD23A6C1D03727 /* DraftComposeContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1810D4C446FCDEFBE868D1 /* DraftComposeContext.swift */; };
 		DD484B270B34FE28D67876A0 /* MessageListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3250A21FAB8C58D991E027EC /* MessageListViewModelTests.swift */; };
 		DDB64A10AB1D81C9329BD09E /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB557DFE34FEBA0FEB5E9CE /* MessageListView.swift */; };
 		E3884BCA8142EBDA068189BD /* MaxBoxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB86BE739BFBA68DA843860E /* MaxBoxApp.swift */; };
@@ -78,6 +80,8 @@
 		8B7279803F4E8683B8FAACE8 /* MessageWindowContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageWindowContext.swift; sourceTree = "<group>"; };
 		8C148A4568F0BCE4526E66C7 /* MaxBox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MaxBox.entitlements; sourceTree = "<group>"; };
 		8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailboxViewModelTests.swift; sourceTree = "<group>"; };
+		8F1810D4C446FCDEFBE868D1 /* DraftComposeContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftComposeContext.swift; sourceTree = "<group>"; };
+		8F8A10D68117671FBF2132A2 /* DraftComposeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftComposeTests.swift; sourceTree = "<group>"; };
 		91C12C99AC050770C4C331E9 /* KeychainServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceTests.swift; sourceTree = "<group>"; };
 		9264CDBF870E982A25B676F8 /* GmailAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailAPIService.swift; sourceTree = "<group>"; };
 		95F6277A6BB009A972D283E5 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				CA71386B5DD351520210BB58 /* Account.swift */,
+				8F1810D4C446FCDEFBE868D1 /* DraftComposeContext.swift */,
 				A1A85D4CA237C5CAD4A75C86 /* MailActivity.swift */,
 				F5EAF8921D65F0450E5745DA /* Mailbox.swift */,
 				BAF96DFB986E52D88C1FB75D /* Message.swift */,
@@ -193,6 +198,7 @@
 			children = (
 				D1DE55873A18B1FFA1CC3864 /* ActivityManagerTests.swift */,
 				FF018688BFBB417132AE9520 /* ComposeViewModelTests.swift */,
+				8F8A10D68117671FBF2132A2 /* DraftComposeTests.swift */,
 				91C12C99AC050770C4C331E9 /* KeychainServiceTests.swift */,
 				8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */,
 				D34081BFBEC59094FB41FA58 /* MessageDetailViewModelTests.swift */,
@@ -304,6 +310,7 @@
 			files = (
 				7792D4A7B1B1F1F274D2B03F /* ActivityManagerTests.swift in Sources */,
 				CD823AD834594D3FCF26D48D /* ComposeViewModelTests.swift in Sources */,
+				517B785D39CAEC30886EA571 /* DraftComposeTests.swift in Sources */,
 				0E03123A8AB7BD80D45CB0DE /* KeychainServiceTests.swift in Sources */,
 				520CADF51198386CF0FF6BE6 /* MailboxViewModelTests.swift in Sources */,
 				1ED8B1E96CFF4A2AD6FEF379 /* MessageDetailViewModelTests.swift in Sources */,
@@ -327,6 +334,7 @@
 				448402A1FEDE32875C54A3CF /* ComposeView.swift in Sources */,
 				8C4F69A0B3CE1408B206CA21 /* ComposeViewModel.swift in Sources */,
 				BBA473751ED71D1B02928811 /* ContentView.swift in Sources */,
+				DC8E9CDBC5DD23A6C1D03727 /* DraftComposeContext.swift in Sources */,
 				32E9C3F65CFEBDC135CB0739 /* GmailAPIService.swift in Sources */,
 				02BBC267AC594B12C30A164D /* HTMLContentView.swift in Sources */,
 				7841962CE3933A218A63D7CB /* KeychainService.swift in Sources */,

@@ -40,6 +40,14 @@ struct MaxBoxApp: App {
         }
         .defaultSize(width: 560, height: 480)
 
+        WindowGroup("Draft", id: "compose-draft", for: DraftComposeContext.self) { $context in
+            if let context {
+                ComposeView(draftContext: context)
+                    .environmentObject(mailboxViewModel)
+            }
+        }
+        .defaultSize(width: 560, height: 480)
+
         WindowGroup("Message", id: "message", for: MessageWindowContext.self) { $context in
             if let context {
                 MessageWindowView(context: context)

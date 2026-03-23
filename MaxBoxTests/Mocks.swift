@@ -93,10 +93,14 @@ final class MockGmailAPIService: GmailAPIServiceProtocol {
     var createDraftResult: Result<String, Error> = .success("mock-draft-id")
     var updateDraftError: Error?
     var deleteDraftError: Error?
+    var getDraftIdResult: String? = "mock-draft-id"
+    var getDraftIdError: Error?
     var createDraftCallCount = 0
     var updateDraftCallCount = 0
     var deleteDraftCallCount = 0
+    var getDraftIdCallCount = 0
     var lastDraftId: String?
+    var lastGetDraftIdMessageId: String?
 
     // Track all access tokens used across calls
     var allListAccessTokens: [String] = []
@@ -199,6 +203,15 @@ final class MockGmailAPIService: GmailAPIServiceProtocol {
         if let error = deleteDraftError {
             throw error
         }
+    }
+
+    func getDraftId(accessToken: String, messageId: String) async throws -> String? {
+        getDraftIdCallCount += 1
+        lastGetDraftIdMessageId = messageId
+        if let error = getDraftIdError {
+            throw error
+        }
+        return getDraftIdResult
     }
 }
 
@@ -401,5 +414,20 @@ extension Message {
         isRead: true,
         isStarred: true,
         labelIds: ["INBOX", "STARRED"]
+    )
+
+    static let draftMessage = Message(
+        id: "draft-msg-001",
+        threadId: "thread-003",
+        subject: "Draft Subject",
+        from: "test@gmail.com",
+        to: ["recipient@example.com"],
+        cc: ["cc@example.com"],
+        date: Date(),
+        snippet: "Draft content...",
+        body: "This is the draft body.",
+        isRead: true,
+        isStarred: false,
+        labelIds: ["DRAFT"]
     )
 }

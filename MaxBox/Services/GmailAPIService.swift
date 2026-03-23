@@ -20,6 +20,19 @@ struct DraftResponse: Decodable {
     let id: String
 }
 
+struct DraftListResponse: Decodable {
+    let drafts: [DraftEntry]?
+}
+
+struct DraftEntry: Decodable {
+    let id: String
+    let message: DraftMessageRef
+}
+
+struct DraftMessageRef: Decodable {
+    let id: String
+}
+
 protocol GmailAPIServiceProtocol {
     func listMessages(accessToken: String, labelId: String, query: String?, pageToken: String?, maxResults: Int) async throws -> MessageListResponse
     func getMessage(accessToken: String, messageId: String) async throws -> Message
@@ -30,6 +43,7 @@ protocol GmailAPIServiceProtocol {
     func createDraft(accessToken: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws -> String
     func updateDraft(accessToken: String, draftId: String, to: String, cc: String?, bcc: String?, subject: String, body: String) async throws
     func deleteDraft(accessToken: String, draftId: String) async throws
+    func getDraftId(accessToken: String, messageId: String) async throws -> String?
 }
 
 final class GmailAPIService: GmailAPIServiceProtocol {
@@ -184,6 +198,19 @@ final class GmailAPIService: GmailAPIServiceProtocol {
 
         let (data, response) = try await session.data(for: request)
         try validateResponse(response, data: data)
+    }
+
+    func getDraftId(accessToken: String, messageId: String) async throws -> String? {
+        let url = URL(string: "\(baseURL)/drafts")!
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await session.data(for: request)
+        try validateResponse(response, data: data)
+
+        let listResponse = try JSONDecoder().decode(DraftListResponse.self, from: data)
+        return listResponse.drafts?.first { $0.message.id == messageId }?.id
     }
 
     // MARK: - Private

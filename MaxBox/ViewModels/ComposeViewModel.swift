@@ -100,6 +100,26 @@ final class ComposeViewModel: ObservableObject {
         draftId = nil
     }
 
+    /// Load an existing draft message into the compose fields.
+    func loadDraft(accessToken: String, messageId: String) async {
+        do {
+            let message = try await gmailService.getMessage(accessToken: accessToken, messageId: messageId)
+            let fetchedDraftId = try? await gmailService.getDraftId(accessToken: accessToken, messageId: messageId)
+
+            suppressDirty = true
+            to = message.to.joined(separator: ", ")
+            cc = message.cc.joined(separator: ", ")
+            subject = message.subject
+            body = message.body
+            self.draftId = fetchedDraftId
+            isDirty = false
+            draftSavedAt = nil
+            suppressDirty = false
+        } catch {
+            errorMessage = "Failed to load draft"
+        }
+    }
+
     // MARK: - Send
 
     func send(accessToken: String) async {

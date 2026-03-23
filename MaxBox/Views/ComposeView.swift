@@ -8,6 +8,8 @@ struct ComposeView: View {
     @State private var pendingCloseAction: CloseAction?
     @State private var showBcc = false
 
+    var draftContext: DraftComposeContext?
+
     private enum CloseAction {
         case saveDraft, discard
     }
@@ -117,12 +119,22 @@ struct ComposeView: View {
 
     private func resolveAccessToken() {
         Task {
-            let accountId = mailboxVM.selectedAccountId ?? mailboxVM.activeAccounts.first?.id
+            let accountId: String?
+            if let ctx = draftContext {
+                accountId = ctx.accountId
+            } else {
+                accountId = mailboxVM.selectedAccountId ?? mailboxVM.activeAccounts.first?.id
+            }
             guard let id = accountId,
                   let token = try? await mailboxVM.getAccessToken(for: id) else {
                 return
             }
             viewModel.accessToken = token
+
+            if let ctx = draftContext {
+                await viewModel.loadDraft(accessToken: token, messageId: ctx.messageId)
+            }
+
             viewModel.startAutoSave()
         }
     }

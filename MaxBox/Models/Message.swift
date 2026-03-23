@@ -43,6 +43,10 @@ struct Message: Identifiable, Hashable, Codable {
         bodyHTML != nil && !(bodyHTML?.isEmpty ?? true)
     }
 
+    var isDraft: Bool {
+        labelIds.contains("DRAFT")
+    }
+
     static let placeholder = Message(
         id: "",
         threadId: "",
