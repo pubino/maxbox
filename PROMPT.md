@@ -1,8 +1,6 @@
-- Expand the .gitignore as necessary
-- Create a new pubino/maxbox repo
-- Create a simple Github Pages site
-- Add an interactive and colorful notarization script to notarize against Apple's service.  Pull as much info as possible from Keychain, etc, prompt for the rest (keychain profile "notary")
-- Document the app and developer info in README.md
-- Add a LICENSE.md with MIT license and &copy; Princeton University
-- Audit the project for security
-- Audit the project for data loss risk
+- Add reply, reply all, and forward buttons to the main toolbar that become active when a message is selected in the message list.
+- Wire the reply, reply all, and forward buttons to open a new compose message window with the selected message quoted and the header fields appropriately populated.
+- Ensure clicking anywhere on a message as it appears in the message l$ist selects the clicked message.
+- Add a Privacy tab to the Settings window.
+- Add a toggle to the Privacy tab, default disabled, to Load Remote Images Automatically.
+- Add a banner that appears at the top of message bodies when Load Remote Images Automatically is disabled that indicates there are remote images present and allows for loading remote images for the individual message only. 

@@ -1,31 +1,37 @@
-# Scratchpad — Iteration 1
+# Scratchpad
 
-## Understanding
-- MaxBox is a native macOS SwiftUI Gmail client (MVVM, macOS 14+, Swift 5.9)
-- Repo already exists at pubino/maxbox (private) with remote configured
-- Secrets.xcconfig has real OAuth creds — already gitignored but on disk
-- No LICENSE or GitHub Pages currently exist
-- No notarization script exists
-- README exists but needs expansion for app + developer info
+## Objective Analysis
 
-## Plan (8 tasks)
-1. **Expand .gitignore** — add common macOS/Xcode/SPM patterns, xcresult, .env, logs, etc.
-2. **Push to pubino/maxbox** — repo exists (private), just push current code
-3. **GitHub Pages** — create docs/ or gh-pages branch with simple site
-4. **Notarization script** — interactive zsh script, pull from Keychain, colorful output
-5. **README.md** — expand with app description, developer info, screenshots placeholder
-6. **LICENSE.md** — MIT, © Princeton University
-7. **Security audit** — review OAuth handling, Keychain usage, secrets management, entitlements
-8. **Data loss audit** — review message caching, drafts, token storage, error handling
+Six features to implement:
+1. Reply, Reply All, Forward buttons on main toolbar (active when message selected)
+2. Wire those buttons to open compose with quoted message + populated headers
+3. Click-to-select on message list rows
+4. Privacy tab in Settings
+5. Load Remote Images toggle (default disabled) in Privacy tab
+6. Remote images banner in message body when toggle disabled
 
-## Completed (all 8 tasks)
-1. Expanded .gitignore — added 45+ patterns, removed tracked lock files
-2. Added LICENSE.md — MIT, © Princeton University
-3. Added scripts/notarize.sh — interactive, colorful, Keychain-aware, uses "notary" profile
-4. Expanded README.md — features, developer info, notarization docs
-5. Created docs/index.html — dark-themed GitHub Pages site with feature cards
-6. Pushed to pubino/maxbox — made public, enabled GitHub Pages at pubino.github.io/maxbox
-7. Security audit — 3 critical, 5 high, 6 medium, 5 low, 10 good practices
-8. Data loss audit — 3 critical, 5 high, 6 medium, 4 low, 8 good practices
+## Architecture Notes
 
-All tasks complete. Objective fully satisfied.
+- Main toolbar is in `ContentView.swift` (already has Compose, Archive, Trash, Search)
+- Message selection tracked via `MessageListViewModel.selectedMessageId`
+- `messageDetailVM.message` holds the full selected message
+- Reply/Forward already exist as stubs in `MessageWindowView` but just open blank compose
+- ComposeView currently accepts optional `DraftComposeContext` for drafts
+- Need a new `ComposeContext` model for reply/reply-all/forward with original message data
+- Need a new WindowGroup in MaxBoxApp for compose-reply windows
+- Settings has one tab (Accounts); need to add Privacy tab
+- HTMLContentView uses WKWebView; need to control remote image loading via CSS/JS or WKWebView config
+- Message list uses `List(selection:)` + `.tag()` — should already handle click-to-select
+
+## Task Breakdown
+
+All tasks completed in single iteration:
+
+1. **compose-context**: Created ComposeContext model (ComposeMode enum + struct) + new "compose-reply" WindowGroup + updated ComposeView to accept and populate from context
+2. **toolbar-buttons**: Added Reply/Reply All/Forward to ContentView toolbar, disabled when no message selected, wired to open compose-reply with ComposeContext
+3. **message-window-fix**: Updated MessageWindowView to build and pass ComposeContext instead of blank UUID
+4. **click-select**: Added .contentShape(Rectangle()) to message rows for reliable hit testing
+5. **privacy-tab**: Added Privacy tab to SettingsView with @AppStorage("loadRemoteImages") toggle, default false
+6. **remote-images-banner**: Added banner to MessageDetailView when remote images present + blocking CSS in HTMLContentView
+
+Build: passed. Tests: 238/238 passed. Commit: 66b0051.
