@@ -1,6 +1,8 @@
-- Enable the opening of multiple, concurrent new message compose windows via Command+N.
-- On account creation respectfully begin to build a cache of messages.
-- Make the search box a search icon that animates to a larger text input.
-- Display an arrow next to the larger search text input that is used to initiate the search.
-- Enable double-clicking on messages in the message list to open the message it its own window with a reply, reply all, forward, archive, and delete icons in the toolbar.
-- Enable double-clicking on messages in the drafts folder to resume editing in a new compose window.  
+- Expand the .gitignore as necessary
+- Create a new pubino/maxbox repo
+- Create a simple Github Pages site
+- Add an interactive and colorful notarization script to notarize against Apple's service.  Pull as much info as possible from Keychain, etc, prompt for the rest (keychain profile "notary")
+- Document the app and developer info in README.md
+- Add a LICENSE.md with MIT license and &copy; Princeton University
+- Audit the project for security
+- Audit the project for data loss risk
