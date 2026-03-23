@@ -34,7 +34,7 @@ struct MaxBoxApp: App {
             }
         }
 
-        Window("New Message", id: "compose") {
+        WindowGroup("New Message", id: "compose", for: UUID.self) { _ in
             ComposeView()
                 .environmentObject(mailboxViewModel)
         }
@@ -61,7 +61,7 @@ private struct OpenComposeButton: View {
 
     var body: some View {
         Button("New Message") {
-            openWindow(id: "compose")
+            openWindow(id: "compose", value: UUID())
         }
         .keyboardShortcut("n", modifiers: .command)
         .disabled(mailboxVM.activeAccounts.isEmpty)

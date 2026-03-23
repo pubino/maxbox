@@ -19,7 +19,7 @@ struct ContentView: View {
         .navigationSplitViewStyle(.balanced)
         .toolbar {
             ToolbarItem(placement: .automatic) {
-                Button { openWindow(id: "compose") } label: {
+                Button { openWindow(id: "compose", value: UUID()) } label: {
                     Label("Compose", systemImage: "square.and.pencil")
                 }
                 .help("Compose new message")
