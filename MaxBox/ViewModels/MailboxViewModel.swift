@@ -25,7 +25,13 @@ final class MailboxViewModel: ObservableObject {
     let keychainService: KeychainServiceProtocol
 
     private var signInTask: Task<Void, Never>?
+    private var cacheBuildTask: Task<Void, Never>?
     private var isRestoring = false
+
+    let activityManager: ActivityManager
+
+    /// Mailbox types to prefetch when a new account is added.
+    static let prefetchMailboxTypes: [MailboxType] = [.inbox, .sent, .drafts]
 
     var selectedMailboxType: MailboxType {
         selection.mailboxType
@@ -55,12 +61,14 @@ final class MailboxViewModel: ObservableObject {
         gmailService: GmailAPIServiceProtocol? = nil,
         persistenceService: PersistenceServiceProtocol? = nil,
         keychainService: KeychainServiceProtocol? = nil,
+        activityManager: ActivityManager? = nil,
         skipRestore: Bool = false
     ) {
         self.authService = authService ?? AuthenticationService()
         self.gmailService = gmailService ?? GmailAPIService()
         self.persistenceService = persistenceService ?? PersistenceService()
         self.keychainService = keychainService ?? KeychainService()
+        self.activityManager = activityManager ?? .shared
         if !skipRestore {
             restoreState()
         }
@@ -79,12 +87,17 @@ final class MailboxViewModel: ObservableObject {
                 try Task.checkCancellation()
                 let account = try await authService.signIn()
                 try Task.checkCancellation()
-                if !accounts.contains(where: { $0.id == account.id }) {
+                let isNew = !accounts.contains(where: { $0.id == account.id })
+                if isNew {
                     accounts.append(account)
                 } else {
                     if let index = accounts.firstIndex(where: { $0.id == account.id }) {
                         accounts[index] = account
                     }
+                }
+                // Begin background cache build for the new account
+                if isNew {
+                    buildInitialCaches(for: account)
                 }
             } catch is CancellationError {
                 // Silently cancelled — another sign-in is taking over
@@ -105,6 +118,8 @@ final class MailboxViewModel: ObservableObject {
     }
 
     func removeAccount(_ account: Account) async {
+        cacheBuildTask?.cancel()
+        cacheBuildTask = nil
         do {
             try await authService.signOut(account: account)
         } catch {
@@ -137,6 +152,94 @@ final class MailboxViewModel: ObservableObject {
 
     func accountEmail(for accountId: String) -> String? {
         accounts.first(where: { $0.id == accountId })?.email
+    }
+
+    // MARK: - Background cache build
+
+    /// Kick off a background fetch of inbox, sent, and drafts for a newly added account.
+    /// The results are written directly to disk cache so they're available when the user
+    /// navigates to those mailboxes.
+    func buildInitialCaches(for account: Account) {
+        cacheBuildTask?.cancel()
+        let accountId = account.id
+        let gmail = gmailService
+        let auth = authService
+        let persistence = persistenceService
+        let activity = activityManager
+        let mailboxTypes = Self.prefetchMailboxTypes
+
+        cacheBuildTask = Task { [weak self] in
+            let activityId = activity.start(
+                "Caching messages for \(account.email)",
+                total: mailboxTypes.count
+            )
+
+            var completedCount = 0
+            for mailboxType in mailboxTypes {
+                guard !Task.isCancelled else { break }
+                let selection = SidebarSelection.account(mailboxType, accountId: accountId)
+                let labelId = mailboxType.gmailLabelId
+
+                do {
+                    let token = try await auth.getValidAccessToken(for: account)
+                    let response = try await gmail.listMessages(
+                        accessToken: token,
+                        labelId: labelId,
+                        query: nil,
+                        pageToken: nil,
+                        maxResults: 25
+                    )
+
+                    guard !Task.isCancelled else { break }
+
+                    var messages: [Message] = []
+                    for ref in (response.messages ?? []) {
+                        guard !Task.isCancelled else { break }
+                        do {
+                            var msg = try await gmail.getMessage(
+                                accessToken: token,
+                                messageId: ref.id
+                            )
+                            msg.accountId = accountId
+                            messages.append(msg)
+                        } catch {
+                            // Skip individual failures
+                        }
+                    }
+
+                    guard !Task.isCancelled else { break }
+
+                    let cached = PersistableMailboxCache(from: CachedMailbox(
+                        messages: messages,
+                        fetchedAt: Date(),
+                        nextPageToken: response.nextPageToken,
+                        hasMorePages: response.nextPageToken != nil
+                    ))
+                    try? persistence.saveMailboxCache(cached, for: selection)
+
+                    // Also populate the in-memory cache on the MessageListViewModel
+                    // via the shared persistence layer — the VM will pick it up on next switch.
+                } catch {
+                    // Token or list call failed — skip this mailbox
+                }
+
+                completedCount += 1
+                activity.update(activityId, current: completedCount)
+            }
+
+            if Task.isCancelled {
+                activity.fail(activityId, error: "Cancelled")
+            } else {
+                activity.complete(activityId)
+            }
+
+            // Clear self-reference
+            await self?.clearCacheBuildTask()
+        }
+    }
+
+    private func clearCacheBuildTask() {
+        cacheBuildTask = nil
     }
 
     // MARK: - Persistence

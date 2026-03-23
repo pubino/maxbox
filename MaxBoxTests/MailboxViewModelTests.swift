@@ -7,6 +7,7 @@ final class MailboxViewModelTests: XCTestCase {
     var mockGmail: MockGmailAPIService!
     var mockPersistence: MockPersistenceService!
     var mockKeychain: MockKeychainService!
+    var activityManager: ActivityManager!
     var sut: MailboxViewModel!
 
     override func setUp() {
@@ -15,11 +16,13 @@ final class MailboxViewModelTests: XCTestCase {
         mockGmail = MockGmailAPIService()
         mockPersistence = MockPersistenceService()
         mockKeychain = MockKeychainService()
+        activityManager = ActivityManager()
         sut = MailboxViewModel(
             authService: mockAuth,
             gmailService: mockGmail,
             persistenceService: mockPersistence,
             keychainService: mockKeychain,
+            activityManager: activityManager,
             skipRestore: true
         )
     }
@@ -312,5 +315,127 @@ final class MailboxViewModelTests: XCTestCase {
 
         // Should have called deleteMailboxCache for each MailboxType (account + allAccounts)
         XCTAssertEqual(mockPersistence.deleteCacheCallCount, MailboxType.allCases.count * 2)
+    }
+
+    // MARK: - Build Initial Caches
+
+    func testAddAccount_triggersInitialCacheBuild() async {
+        let account = Account.testAccount
+        mockAuth.signInResult = .success(account)
+        mockAuth.accessTokenResult = .success("cache-token")
+
+        let refs = [MessageRef(id: "msg-001", threadId: "t-001")]
+        mockGmail.listMessagesResult = .success(
+            MessageListResponse(messages: refs, nextPageToken: nil, resultSizeEstimate: 1)
+        )
+        mockGmail.getMessageResult = .success(Message.testMessage)
+
+        await sut.addAccount()
+
+        // Allow background task to complete
+        await Task.yield()
+        // Give the cache build task time to run
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        // Should have cached inbox, sent, and drafts (3 mailbox types)
+        let expectedTypes = MailboxViewModel.prefetchMailboxTypes
+        XCTAssertEqual(expectedTypes.count, 3)
+
+        // listMessages called once per mailbox type
+        XCTAssertEqual(mockGmail.listMessagesCallCount, expectedTypes.count)
+
+        // getMessage called once per ref per mailbox type
+        XCTAssertEqual(mockGmail.getMessageCallCount, expectedTypes.count)
+
+        // Each mailbox should have been persisted to disk
+        XCTAssertEqual(mockPersistence.saveCacheCallCount, expectedTypes.count)
+
+        for mailboxType in expectedTypes {
+            let selection = SidebarSelection.account(mailboxType, accountId: account.id)
+            XCTAssertNotNil(mockPersistence.savedCaches[selection])
+            XCTAssertEqual(mockPersistence.savedCaches[selection]?.messages.count, 1)
+        }
+    }
+
+    func testAddAccount_duplicate_doesNotTriggerCacheBuild() async {
+        let account = Account.testAccount
+        sut.accounts = [account]
+        mockAuth.signInResult = .success(account)
+
+        let callsBefore = mockGmail.listMessagesCallCount
+
+        await sut.addAccount()
+        await Task.yield()
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        // No cache build for duplicate account
+        XCTAssertEqual(mockGmail.listMessagesCallCount, callsBefore)
+    }
+
+    func testBuildInitialCaches_emptyMailbox() async {
+        let account = Account.testAccount
+        mockAuth.accessTokenResult = .success("token")
+        mockGmail.listMessagesResult = .success(
+            MessageListResponse(messages: nil, nextPageToken: nil, resultSizeEstimate: 0)
+        )
+
+        sut.buildInitialCaches(for: account)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        // Should still persist (empty) caches
+        XCTAssertEqual(mockPersistence.saveCacheCallCount, MailboxViewModel.prefetchMailboxTypes.count)
+        for mailboxType in MailboxViewModel.prefetchMailboxTypes {
+            let selection = SidebarSelection.account(mailboxType, accountId: account.id)
+            XCTAssertEqual(mockPersistence.savedCaches[selection]?.messages.count, 0)
+        }
+    }
+
+    func testBuildInitialCaches_tokenFailure_skipsGracefully() async {
+        let account = Account.testAccount
+        mockAuth.accessTokenResult = .failure(AuthError.notAuthenticated)
+
+        sut.buildInitialCaches(for: account)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        // Should not crash, no caches saved
+        XCTAssertEqual(mockPersistence.saveCacheCallCount, 0)
+        XCTAssertEqual(mockGmail.listMessagesCallCount, 0)
+    }
+
+    func testBuildInitialCaches_reportsActivity() async {
+        let account = Account.testAccount
+        mockAuth.accessTokenResult = .success("token")
+        mockGmail.listMessagesResult = .success(
+            MessageListResponse(messages: nil, nextPageToken: nil, resultSizeEstimate: 0)
+        )
+
+        sut.buildInitialCaches(for: account)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        let cachingActivities = activityManager.activities.filter {
+            $0.title.contains("Caching messages")
+        }
+        XCTAssertEqual(cachingActivities.count, 1)
+        if case .completed = cachingActivities.first?.status {} else {
+            XCTFail("Activity should be completed")
+        }
+    }
+
+    func testBuildInitialCaches_stampsAccountIdOnMessages() async {
+        let account = Account.testAccount
+        mockAuth.accessTokenResult = .success("token")
+
+        let refs = [MessageRef(id: "msg-001", threadId: "t-001")]
+        mockGmail.listMessagesResult = .success(
+            MessageListResponse(messages: refs, nextPageToken: nil, resultSizeEstimate: 1)
+        )
+        mockGmail.getMessageResult = .success(Message.testMessage)
+
+        sut.buildInitialCaches(for: account)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        let inboxSelection = SidebarSelection.account(.inbox, accountId: account.id)
+        let cached = mockPersistence.savedCaches[inboxSelection]
+        XCTAssertEqual(cached?.messages.first?.accountId, account.id)
     }
 }
