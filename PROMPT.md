@@ -1,8 +1,6 @@
-- In the absence of at least one configured account, open the Settings window to the Accounts tab.                    
-  - Remove a Keyboard Shortcut for the Add Account menu item.                                                           
-  - Make Command+N open a new message composition window.                                                               
-  - Make Shift+Command+N open a new window (main app window).                                                           
-  - Change the Send button in the new message composition window to a blue circle with an upwards-facing arrow.         
-  - Add a menu item to the View menu that toggles Show or Hide the BCC field, with the item contextually available      
-  when a new compose window is open.                                                                                    
-  - Immediately refresh the message list when a message is trashed or archived. 
+- Enable the opening of multiple, concurrent new message compose windows via Command+N.
+- On account creation respectfully begin to build a cache of messages.
+- Make the search box a search icon that animates to a larger text input.
+- Display an arrow next to the larger search text input that is used to initiate the search.
+- Enable double-clicking on messages in the message list to open the message it its own window with a reply, reply all, forward, archive, and delete icons in the toolbar.
+- Enable double-clicking on messages in the drafts folder to resume editing in a new compose window.  
