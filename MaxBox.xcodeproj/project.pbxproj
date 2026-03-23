@@ -22,6 +22,7 @@
 		4CDC7E56DBB36A7583B8E21E /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F6277A6BB009A972D283E5 /* ModelTests.swift */; };
 		520CADF51198386CF0FF6BE6 /* MailboxViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D362A4A91A10007E8F3C88A /* MailboxViewModelTests.swift */; };
 		550E91C29C71C709D5E51145 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E7FB14E2B1A064AEA22AC45 /* SettingsView.swift */; };
+		585B75A2F0B90A8F149293BF /* SearchBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01602CC280F0925ED6C03566 /* SearchBarTests.swift */; };
 		748D59798F120AF188FC743C /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAF96DFB986E52D88C1FB75D /* Message.swift */; };
 		7792D4A7B1B1F1F274D2B03F /* ActivityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1DE55873A18B1FFA1CC3864 /* ActivityManagerTests.swift */; };
 		7841962CE3933A218A63D7CB /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014706504B6AEFFE9BAAFA37 /* KeychainService.swift */; };
@@ -55,6 +56,7 @@
 
 /* Begin PBXFileReference section */
 		014706504B6AEFFE9BAAFA37 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		01602CC280F0925ED6C03566 /* SearchBarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarTests.swift; sourceTree = "<group>"; };
 		04D4F22C0748E60DA7F29BD4 /* PersistableTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistableTypes.swift; sourceTree = "<group>"; };
 		0E7FB14E2B1A064AEA22AC45 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		15AFFF015DC1DC24A48CDF44 /* PersistenceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceServiceTests.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				FFE31F3518737D1F6DEE0EF0 /* Mocks.swift */,
 				95F6277A6BB009A972D283E5 /* ModelTests.swift */,
 				15AFFF015DC1DC24A48CDF44 /* PersistenceServiceTests.swift */,
+				01602CC280F0925ED6C03566 /* SearchBarTests.swift */,
 			);
 			path = MaxBoxTests;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 				3F2F19F407A3CFF68F5B9260 /* Mocks.swift in Sources */,
 				4CDC7E56DBB36A7583B8E21E /* ModelTests.swift in Sources */,
 				88B6120D60339483F1C89143 /* PersistenceServiceTests.swift in Sources */,
+				585B75A2F0B90A8F149293BF /* SearchBarTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
