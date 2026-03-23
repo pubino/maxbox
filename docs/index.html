@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxBox — Native macOS Gmail Client</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-dim: #8b949e;
+            --accent: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.15);
+            --green: #3fb950;
+            --purple: #bc8cff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            background: linear-gradient(180deg, var(--accent-glow) 0%, transparent 60%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .tagline {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-dim);
+        }
+
+        .badge.accent { border-color: var(--accent); color: var(--accent); }
+        .badge.green { border-color: var(--green); color: var(--green); }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: var(--bg);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .cta:hover { opacity: 0.9; }
+
+        .cta svg { width: 20px; height: 20px; }
+
+        .features {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .feature .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .quickstart {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .quickstart pre {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .quickstart .comment { color: var(--text-dim); }
+        .quickstart .cmd { color: var(--green); }
+
+        .tech-stack {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tech {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background: var(--surface);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1><span>MaxBox</span></h1>
+    <p class="tagline">A native macOS Gmail client built with SwiftUI. Fast, private, keyboard-driven.</p>
+    <div class="badge-row">
+        <span class="badge accent">macOS 14+</span>
+        <span class="badge">SwiftUI</span>
+        <span class="badge">Gmail REST API</span>
+        <span class="badge green">MIT License</span>
+    </div>
+    <a class="cta" href="https://github.com/pubino/maxbox">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        View on GitHub
+    </a>
+</div>
+
+<div class="features">
+    <div class="feature">
+        <div class="icon">&#x1f4e8;</div>
+        <h3>Multi-Account</h3>
+        <p>Add multiple Gmail accounts and browse them in a unified "All Accounts" view or individually.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">&#x1f5d7;</div>
+        <h3>Multi-Window</h3>
+        <p>Compose in separate windows, open messages in their own window, run multiple main windows side by side.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">&#x1f50d;</div>
+        <h3>Instant Search</h3>
+        <p>Animated expandable search bar with instant filtering across your messages.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">&#x270f;&#xfe0f;</div>
+        <h3>Compose &amp; Drafts</h3>
+        <p>Rich text editor, auto-save drafts, and resume editing by double-clicking any draft.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">&#x26a1;</div>
+        <h3>Background Caching</h3>
+        <p>Messages are cached locally after account creation for fast, responsive access.</p>
+    </div>
+    <div class="feature">
+        <div class="icon">&#x1f512;</div>
+        <h3>Keychain Security</h3>
+        <p>OAuth tokens are stored in the macOS Keychain. No passwords are ever saved to disk.</p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Quick Start</h2>
+    <div class="quickstart">
+        <pre><span class="comment"># Clone the repo</span>
+<span class="cmd">git clone https://github.com/pubino/maxbox.git && cd maxbox</span>
+
+<span class="comment"># Set up GCP OAuth credentials (interactive)</span>
+<span class="cmd">./scripts/gcp-setup.sh</span>
+
+<span class="comment"># Build and run</span>
+<span class="cmd">source scripts/.env.local && ./scripts/run.sh</span></pre>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Built With</h2>
+    <div class="tech-stack">
+        <div class="tech">Swift 5.9</div>
+        <div class="tech">SwiftUI</div>
+        <div class="tech">Gmail REST API</div>
+        <div class="tech">OAuth 2.0</div>
+        <div class="tech">macOS Keychain</div>
+        <div class="tech">XcodeGen</div>
+    </div>
+</div>
+
+<footer>
+    <p>Copyright &copy; 2026 Princeton University &middot; <a href="https://github.com/pubino/maxbox/blob/main/LICENSE.md">MIT License</a></p>
+</footer>
+
+</body>
+</html>
