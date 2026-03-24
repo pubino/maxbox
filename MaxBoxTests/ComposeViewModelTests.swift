@@ -4,12 +4,14 @@ import XCTest
 @MainActor
 final class ComposeViewModelTests: XCTestCase {
     var mockGmail: MockGmailAPIService!
+    var mockPersistence: MockPersistenceService!
     var sut: ComposeViewModel!
 
     override func setUp() {
         super.setUp()
         mockGmail = MockGmailAPIService()
-        sut = ComposeViewModel(gmailService: mockGmail)
+        mockPersistence = MockPersistenceService()
+        sut = ComposeViewModel(gmailService: mockGmail, persistenceService: mockPersistence)
     }
 
     override func tearDown() {
@@ -243,12 +245,59 @@ final class ComposeViewModelTests: XCTestCase {
         XCTAssertNotNil(sut.draftSavedAt)
     }
 
-    func testSaveDraft_noAccessToken_doesNothing() async {
+    func testSaveDraft_noAccessToken_savesLocally() async {
         sut.to = "alice@example.com"
 
         await sut.saveDraft()
 
+        // C3: No remote call, but local draft should be saved
         XCTAssertEqual(mockGmail.createDraftCallCount, 0)
+        XCTAssertEqual(mockPersistence.saveLocalDraftCallCount, 1)
+        XCTAssertNotNil(sut.localDraftId)
+        XCTAssertNotNil(sut.draftSavedAt)
+    }
+
+    func testSaveDraft_remoteFailure_fallsBackToLocal() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        mockGmail.createDraftResult = .failure(GmailAPIError.requestFailed(500, "Server Error"))
+
+        await sut.saveDraft()
+
+        // C3: Remote failed, local draft saved
+        XCTAssertEqual(mockGmail.createDraftCallCount, 1)
+        XCTAssertEqual(mockPersistence.saveLocalDraftCallCount, 1)
+        XCTAssertNotNil(sut.localDraftId)
+    }
+
+    func testSaveDraft_remoteSuccess_cleansUpLocalDraft() async {
+        // First save fails remotely, creating a local draft
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        mockGmail.createDraftResult = .failure(GmailAPIError.requestFailed(500, "err"))
+        await sut.saveDraft()
+        XCTAssertNotNil(sut.localDraftId)
+
+        // Now remote succeeds
+        mockGmail.createDraftResult = .success("mock-draft-id")
+        sut.to = "alice@example.com"
+        await sut.saveDraft()
+
+        // Local draft should be cleaned up
+        XCTAssertEqual(mockPersistence.deleteLocalDraftCallCount, 1)
+    }
+
+    func testDiscardDraft_remoteFailure_keepsDraftId() async {
+        sut.accessToken = "token"
+        sut.to = "alice@example.com"
+        await sut.saveDraft()
+        XCTAssertNotNil(sut.draftId)
+
+        // M3: Remote delete fails — draftId should be preserved
+        mockGmail.deleteDraftError = GmailAPIError.requestFailed(500, "err")
+        await sut.discardDraft()
+
+        XCTAssertNotNil(sut.draftId) // M3: still set
     }
 
     // MARK: - Close Flow

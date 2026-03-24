@@ -7,6 +7,8 @@ struct MessageWindowView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = MessageDetailViewModel()
     @State private var actionInProgress = false
+    @State private var showTrashConfirmation = false
+    @State private var showArchiveConfirmation = false
 
     var body: some View {
         MessageDetailView(viewModel: viewModel)
@@ -33,13 +35,13 @@ struct MessageWindowView: View {
 
                     Spacer()
 
-                    Button { Task { await archiveMessage() } } label: {
+                    Button { showArchiveConfirmation = true } label: {
                         Label("Archive", systemImage: "archivebox")
                     }
                     .help("Archive")
                     .disabled(viewModel.message == nil || actionInProgress)
 
-                    Button { Task { await trashMessage() } } label: {
+                    Button { showTrashConfirmation = true } label: {
                         Label("Trash", systemImage: "trash")
                     }
                     .help("Move to trash")
@@ -48,6 +50,23 @@ struct MessageWindowView: View {
             }
             .onAppear {
                 Task { await loadMessage() }
+            }
+            // H1: Confirmation dialogs for destructive actions
+            .alert("Move to Trash?", isPresented: $showTrashConfirmation) {
+                Button("Trash", role: .destructive) {
+                    Task { await trashMessage() }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("This message will be moved to the trash. You can recover it from Gmail within 30 days.")
+            }
+            .alert("Archive Message?", isPresented: $showArchiveConfirmation) {
+                Button("Archive", role: .destructive) {
+                    Task { await archiveMessage() }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("This message will be removed from the inbox.")
             }
     }
 

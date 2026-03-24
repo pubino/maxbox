@@ -238,9 +238,10 @@ final class PersistenceServiceTests: XCTestCase {
 
     // MARK: - VersionedStore
 
-    func testCorruptFile_returnsNilAndCleansUp() throws {
-        // Write garbage to the accounts file
+    func testCorruptFile_returnsNilAndCreatesBackup() throws {
+        // C2: Write garbage to the accounts file
         let accountsFile = testDirectory.appendingPathComponent("accounts.json")
+        let backupFile = accountsFile.appendingPathExtension("bak")
         try FileManager.default.createDirectory(at: testDirectory, withIntermediateDirectories: true)
         try "not valid json {{{".data(using: .utf8)!.write(to: accountsFile)
 
@@ -249,6 +250,60 @@ final class PersistenceServiceTests: XCTestCase {
 
         // Corrupt file should have been cleaned up
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountsFile.path))
+        // C2: Backup should exist
+        XCTAssertTrue(FileManager.default.fileExists(atPath: backupFile.path))
+        // Backup content should match the original corrupt data
+        let backupData = try Data(contentsOf: backupFile)
+        XCTAssertEqual(String(data: backupData, encoding: .utf8), "not valid json {{{")
+    }
+
+    func testFutureVersion_preservesFileAndReturnsEmpty() throws {
+        // C1: A future version file should not be deleted
+        let accountsFile = testDirectory.appendingPathComponent("accounts.json")
+        try FileManager.default.createDirectory(at: testDirectory, withIntermediateDirectories: true)
+
+        // Write a valid JSON with future version
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let futureStore = "{\"version\":999,\"payload\":[]}"
+        try futureStore.data(using: .utf8)!.write(to: accountsFile)
+
+        let loaded = try sut.loadAccounts()
+        XCTAssertTrue(loaded.isEmpty)
+
+        // C1: File should be preserved (not deleted)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: accountsFile.path))
+    }
+
+    // MARK: - Local Drafts
+
+    func testSaveAndLoadLocalDraft() throws {
+        let draft = LocalDraft(to: "a@b.com", cc: "", bcc: "", subject: "Test", body: "Hello")
+        try sut.saveLocalDraft(draft)
+
+        let loaded = try sut.loadLocalDraft(id: draft.id)
+        XCTAssertNotNil(loaded)
+        XCTAssertEqual(loaded?.to, "a@b.com")
+        XCTAssertEqual(loaded?.subject, "Test")
+    }
+
+    func testDeleteLocalDraft() throws {
+        let draft = LocalDraft(to: "a@b.com", subject: "Test")
+        try sut.saveLocalDraft(draft)
+        try sut.deleteLocalDraft(id: draft.id)
+
+        let loaded = try sut.loadLocalDraft(id: draft.id)
+        XCTAssertNil(loaded)
+    }
+
+    func testLoadAllLocalDrafts() throws {
+        let draft1 = LocalDraft(to: "a@b.com", subject: "Draft 1")
+        let draft2 = LocalDraft(to: "c@d.com", subject: "Draft 2")
+        try sut.saveLocalDraft(draft1)
+        try sut.saveLocalDraft(draft2)
+
+        let all = try sut.loadAllLocalDrafts()
+        XCTAssertEqual(all.count, 2)
     }
 
     func testCacheAge() {

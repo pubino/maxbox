@@ -73,6 +73,32 @@ struct PersistableMailboxCache: Codable {
     }
 }
 
+// MARK: - Local Draft (fallback when Gmail API is unreachable)
+
+struct LocalDraft: Codable, Identifiable {
+    let id: UUID
+    var to: String
+    var cc: String
+    var bcc: String
+    var subject: String
+    var body: String
+    var accountId: String?
+    var remoteDraftId: String?
+    var savedAt: Date
+
+    init(to: String = "", cc: String = "", bcc: String = "", subject: String = "", body: String = "", accountId: String? = nil, remoteDraftId: String? = nil) {
+        self.id = UUID()
+        self.to = to
+        self.cc = cc
+        self.bcc = bcc
+        self.subject = subject
+        self.body = body
+        self.accountId = accountId
+        self.remoteDraftId = remoteDraftId
+        self.savedAt = Date()
+    }
+}
+
 // MARK: - UserPreferences
 
 struct UserPreferences: Codable, Equatable {

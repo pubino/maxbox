@@ -333,6 +333,36 @@ final class MockPersistenceService: PersistenceServiceProtocol {
         case .failure(let error): throw error
         }
     }
+
+    // MARK: - Local Drafts
+
+    var localDrafts: [UUID: LocalDraft] = [:]
+    var saveLocalDraftCallCount = 0
+    var loadLocalDraftCallCount = 0
+    var deleteLocalDraftCallCount = 0
+    var loadAllLocalDraftsCallCount = 0
+    var saveLocalDraftError: Error?
+
+    func saveLocalDraft(_ draft: LocalDraft) throws {
+        saveLocalDraftCallCount += 1
+        if let error = saveLocalDraftError { throw error }
+        localDrafts[draft.id] = draft
+    }
+
+    func loadLocalDraft(id: UUID) throws -> LocalDraft? {
+        loadLocalDraftCallCount += 1
+        return localDrafts[id]
+    }
+
+    func deleteLocalDraft(id: UUID) throws {
+        deleteLocalDraftCallCount += 1
+        localDrafts.removeValue(forKey: id)
+    }
+
+    func loadAllLocalDrafts() throws -> [LocalDraft] {
+        loadAllLocalDraftsCallCount += 1
+        return Array(localDrafts.values)
+    }
 }
 
 // MARK: - Test Helpers

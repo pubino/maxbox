@@ -1,5 +1,8 @@
 import Foundation
 import Combine
+import os.log
+
+private let logger = Logger(subsystem: "com.maxbox.MaxBox", category: "MessageList")
 
 struct CachedMailbox {
     var messages: [Message]
@@ -662,8 +665,25 @@ final class MessageListViewModel: ObservableObject {
         return parts.isEmpty ? nil : parts.joined(separator: " ")
     }
 
+    /// L4: Maximum number of in-memory cache entries to prevent unbounded growth.
+    static let maxCacheEntries = 20
+
     private func persistCacheToDisk(_ cached: CachedMailbox, for selection: SidebarSelection) {
         let persistable = PersistableMailboxCache(from: cached)
-        try? persistenceService.saveMailboxCache(persistable, for: selection)
+        do {
+            try persistenceService.saveMailboxCache(persistable, for: selection)
+        } catch {
+            logger.error("Failed to persist cache for \(selection.cacheKey): \(error.localizedDescription)")
+            errorMessage = "Could not save message cache — \(error.localizedDescription)"
+        }
+
+        // L4: Evict oldest entries if cache grows too large
+        if cache.count > Self.maxCacheEntries {
+            let sorted = cache.sorted { $0.value.fetchedAt < $1.value.fetchedAt }
+            let toRemove = sorted.prefix(cache.count - Self.maxCacheEntries)
+            for (key, _) in toRemove {
+                cache.removeValue(forKey: key)
+            }
+        }
     }
 }

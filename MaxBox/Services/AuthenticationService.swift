@@ -7,6 +7,8 @@ enum AuthError: Error, LocalizedError {
     case tokenExchangeFailed(String)
     case notAuthenticated
     case refreshFailed
+    /// Token was revoked (password change, app deauthorization). User must re-authenticate.
+    case tokenRevoked(accountId: String)
 
     var errorDescription: String? {
         switch self {
@@ -15,6 +17,7 @@ enum AuthError: Error, LocalizedError {
         case .tokenExchangeFailed(let reason): return "Token exchange failed: \(reason)"
         case .notAuthenticated: return "Not authenticated. Please sign in."
         case .refreshFailed: return "Failed to refresh access token"
+        case .tokenRevoked: return "Your session has expired. Please sign in again to re-authorize this account."
         }
     }
 }
@@ -121,7 +124,16 @@ final class AuthenticationService: AuthenticationServiceProtocol {
         request.httpBody = params.map { "\($0.key)=\($0.value)" }.joined(separator: "&").data(using: .utf8)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        // H2: Detect invalid_grant (token revoked, password changed, app deauthorized)
+        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 400 {
+            if let body = String(data: data, encoding: .utf8),
+               body.contains("invalid_grant") {
+                throw AuthError.tokenRevoked(accountId: account.id)
+            }
+        }
+
         let tokenResponse = try JSONDecoder().decode(TokenResponse.self, from: data)
 
         var updatedAccount = account

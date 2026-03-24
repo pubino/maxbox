@@ -1,4 +1,7 @@
 import Foundation
+import os.log
+
+private let logger = Logger(subsystem: "com.maxbox.MaxBox", category: "Persistence")
 
 // MARK: - Errors
 
@@ -37,6 +40,11 @@ protocol PersistenceServiceProtocol {
 
     func savePreferences(_ preferences: UserPreferences) throws
     func loadPreferences() throws -> UserPreferences
+
+    func saveLocalDraft(_ draft: LocalDraft) throws
+    func loadLocalDraft(id: UUID) throws -> LocalDraft?
+    func deleteLocalDraft(id: UUID) throws
+    func loadAllLocalDrafts() throws -> [LocalDraft]
 }
 
 // MARK: - Implementation
@@ -94,10 +102,17 @@ final class PersistenceService: PersistenceServiceProtocol {
         guard let store: VersionedStore<[PersistableAccount]> = try readJSON(from: url) else {
             return []
         }
-        guard store.version == VersionedStore<[PersistableAccount]>.currentVersion else {
-            // Silently discard future/incompatible versions
-            try? fileManager.removeItem(at: url)
+        let expected = VersionedStore<[PersistableAccount]>.currentVersion
+        if store.version > expected {
+            // Future version — preserve file, return empty so we don't corrupt newer data
+            logger.warning("Accounts file version \(store.version) is newer than expected \(expected); skipping load")
             return []
+        }
+        if store.version < expected {
+            // Older version — migrate: current schema is compatible with v1 payload,
+            // so re-save at current version. Extend with explicit migration steps as needed.
+            logger.info("Migrating accounts from v\(store.version) to v\(expected)")
+            try? writeJSON(VersionedStore(payload: store.payload), to: url)
         }
         return store.payload
     }
@@ -134,9 +149,14 @@ final class PersistenceService: PersistenceServiceProtocol {
         guard let store: VersionedStore<PersistableMailboxCache> = try readJSON(from: url) else {
             return nil
         }
-        guard store.version == VersionedStore<PersistableMailboxCache>.currentVersion else {
-            try? fileManager.removeItem(at: url)
+        let expected = VersionedStore<PersistableMailboxCache>.currentVersion
+        if store.version > expected {
+            logger.warning("Cache version \(store.version) is newer than expected \(expected); skipping")
             return nil
+        }
+        if store.version < expected {
+            logger.info("Migrating cache from v\(store.version) to v\(expected)")
+            try? writeJSON(VersionedStore(payload: store.payload), to: url)
         }
         return store.payload
     }
@@ -164,6 +184,36 @@ final class PersistenceService: PersistenceServiceProtocol {
             return .default
         }
         return try decoder.decode(UserPreferences.self, from: data)
+    }
+
+    // MARK: - Local Drafts (C3 fallback)
+
+    private var draftsDirectory: URL {
+        baseDirectory.appendingPathComponent("drafts")
+    }
+
+    func saveLocalDraft(_ draft: LocalDraft) throws {
+        let url = draftsDirectory.appendingPathComponent("\(draft.id.uuidString).json")
+        try writeJSON(draft, to: url)
+    }
+
+    func loadLocalDraft(id: UUID) throws -> LocalDraft? {
+        let url = draftsDirectory.appendingPathComponent("\(id.uuidString).json")
+        return try readJSON(from: url)
+    }
+
+    func deleteLocalDraft(id: UUID) throws {
+        let url = draftsDirectory.appendingPathComponent("\(id.uuidString).json")
+        try? fileManager.removeItem(at: url)
+    }
+
+    func loadAllLocalDrafts() throws -> [LocalDraft] {
+        guard fileManager.fileExists(atPath: draftsDirectory.path) else { return [] }
+        let files = try fileManager.contentsOfDirectory(at: draftsDirectory, includingPropertiesForKeys: nil)
+        return files.compactMap { url -> LocalDraft? in
+            guard url.pathExtension == "json" else { return nil }
+            return try? readJSON(from: url)
+        }
     }
 
     // MARK: - Helpers
@@ -199,8 +249,12 @@ final class PersistenceService: PersistenceServiceProtocol {
             let data = try Data(contentsOf: url)
             return try decoder.decode(T.self, from: data)
         } catch {
-            // Corrupt file — silently discard
+            // Corrupt file — back up before removing so data isn't permanently lost
+            let backupURL = url.appendingPathExtension("bak")
+            try? fileManager.removeItem(at: backupURL) // remove stale backup
+            try? fileManager.copyItem(at: url, to: backupURL)
             try? fileManager.removeItem(at: url)
+            logger.error("Corrupt file at \(url.lastPathComponent): \(error.localizedDescription). Backup saved to \(backupURL.lastPathComponent)")
             return nil
         }
     }

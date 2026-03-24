@@ -7,6 +7,8 @@ struct ContentView: View {
     @StateObject private var messageListVM = MessageListViewModel()
     @StateObject private var messageDetailVM = MessageDetailViewModel()
     @State private var hasPromptedForAccount = false
+    @State private var showTrashConfirmation = false
+    @State private var showArchiveConfirmation = false
 
     var body: some View {
         NavigationSplitView {
@@ -50,7 +52,7 @@ struct ContentView: View {
             }
 
             ToolbarItem(placement: .automatic) {
-                Button { Task { await archiveMessage() } } label: {
+                Button { showArchiveConfirmation = true } label: {
                     Label("Archive", systemImage: "archivebox")
                 }
                 .help("Archive message")
@@ -58,7 +60,7 @@ struct ContentView: View {
             }
 
             ToolbarItem(placement: .automatic) {
-                Button { Task { await trashMessage() } } label: {
+                Button { showTrashConfirmation = true } label: {
                     Label("Trash", systemImage: "trash")
                 }
                 .help("Move to trash")
@@ -100,6 +102,32 @@ struct ContentView: View {
             Button("OK") { mailboxVM.authError = nil }
         } message: {
             Text(mailboxVM.authError ?? "")
+        }
+        // H1: Confirmation dialogs for destructive actions
+        .alert("Move to Trash?", isPresented: $showTrashConfirmation) {
+            Button("Trash", role: .destructive) {
+                Task { await trashMessage() }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This message will be moved to the trash. You can recover it from Gmail within 30 days.")
+        }
+        .alert("Archive Message?", isPresented: $showArchiveConfirmation) {
+            Button("Archive", role: .destructive) {
+                Task { await archiveMessage() }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This message will be removed from the inbox.")
+        }
+        // H3: Surface persistence errors to user
+        .alert("Storage Error", isPresented: .init(
+            get: { mailboxVM.persistenceError != nil },
+            set: { if !$0 { mailboxVM.persistenceError = nil } }
+        )) {
+            Button("OK") { mailboxVM.persistenceError = nil }
+        } message: {
+            Text(mailboxVM.persistenceError ?? "")
         }
     }
 

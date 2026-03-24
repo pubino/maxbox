@@ -120,19 +120,26 @@ struct ComposeView: View {
 
     private func resolveAccessToken() {
         Task {
-            let accountId: String?
+            let resolvedAccountId: String?
             if let ctx = draftContext {
-                accountId = ctx.accountId
+                resolvedAccountId = ctx.accountId
             } else if let ctx = composeContext {
-                accountId = ctx.accountId
+                resolvedAccountId = ctx.accountId
             } else {
-                accountId = mailboxVM.selectedAccountId ?? mailboxVM.activeAccounts.first?.id
+                resolvedAccountId = mailboxVM.selectedAccountId ?? mailboxVM.activeAccounts.first?.id
             }
-            guard let id = accountId,
+            guard let id = resolvedAccountId,
                   let token = try? await mailboxVM.getAccessToken(for: id) else {
                 return
             }
             viewModel.accessToken = token
+            viewModel.accountId = id
+
+            // H5: Provide a token refresher so saveDraft/send always get a fresh token
+            viewModel.tokenRefresher = { [weak mailboxVM] in
+                guard let vm = mailboxVM else { throw AuthError.notAuthenticated }
+                return try await vm.getAccessToken(for: id)
+            }
 
             if let ctx = draftContext {
                 await viewModel.loadDraft(accessToken: token, messageId: ctx.messageId)

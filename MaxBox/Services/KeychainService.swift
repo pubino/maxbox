@@ -30,16 +30,24 @@ final class KeychainService: KeychainServiceProtocol {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data
+            kSecAttrAccount as String: key
         ]
 
-        // Try to delete existing item first
-        SecItemDelete(query as CFDictionary)
+        // M4: Use SecItemUpdate to avoid the delete-before-add gap where a crash
+        // between the two calls could lose the token entirely.
+        let updateAttrs: [String: Any] = [kSecValueData as String: data]
+        let updateStatus = SecItemUpdate(query as CFDictionary, updateAttrs as CFDictionary)
 
-        let status = SecItemAdd(query as CFDictionary, nil)
-        guard status == errSecSuccess else {
-            throw KeychainError.unexpectedStatus(status)
+        if updateStatus == errSecItemNotFound {
+            // Item doesn't exist yet — add it
+            var addQuery = query
+            addQuery[kSecValueData as String] = data
+            let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+            guard addStatus == errSecSuccess else {
+                throw KeychainError.unexpectedStatus(addStatus)
+            }
+        } else if updateStatus != errSecSuccess {
+            throw KeychainError.unexpectedStatus(updateStatus)
         }
     }
 

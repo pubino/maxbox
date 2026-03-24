@@ -1,4 +1,7 @@
 import Foundation
+import os.log
+
+private let logger = Logger(subsystem: "com.maxbox.MaxBox", category: "Compose")
 
 @MainActor
 final class ComposeViewModel: ObservableObject {
@@ -17,13 +20,24 @@ final class ComposeViewModel: ObservableObject {
     private(set) var isDirty = false
     var accessToken: String?
 
+    /// Closure to obtain a fresh access token, refreshing if needed (H5).
+    var tokenRefresher: (() async throws -> String)?
+
+    /// Account ID for local draft storage (C3).
+    var accountId: String?
+
     private let gmailService: GmailAPIServiceProtocol
+    let persistenceService: PersistenceServiceProtocol
     private var autoSaveTimer: Timer?
     private var suppressDirty = false
-    private static let autoSaveInterval: TimeInterval = 30
+    private static let autoSaveInterval: TimeInterval = 10 // H4: reduced from 30s
 
-    init(gmailService: GmailAPIServiceProtocol? = nil) {
+    /// ID of the local draft fallback when remote save fails.
+    private(set) var localDraftId: UUID?
+
+    init(gmailService: GmailAPIServiceProtocol? = nil, persistenceService: PersistenceServiceProtocol? = nil) {
         self.gmailService = gmailService ?? GmailAPIService()
+        self.persistenceService = persistenceService ?? PersistenceService()
     }
 
     var isValid: Bool {
@@ -54,14 +68,34 @@ final class ComposeViewModel: ObservableObject {
     }
 
     private func autoSaveTick() async {
-        guard isDirty, hasContent, accessToken != nil else { return }
+        guard isDirty, hasContent else { return }
         await saveDraft()
+    }
+
+    // MARK: - Token Resolution (H5)
+
+    /// Obtain the best available access token, refreshing if needed.
+    private func resolveToken() async -> String? {
+        if let refresher = tokenRefresher {
+            do {
+                let fresh = try await refresher()
+                accessToken = fresh
+                return fresh
+            } catch {
+                logger.warning("Token refresh failed: \(error.localizedDescription)")
+            }
+        }
+        return accessToken
     }
 
     // MARK: - Draft Operations
 
     func saveDraft() async {
-        guard let token = accessToken else { return }
+        guard let token = await resolveToken() else {
+            // No token available — fall back to local draft (C3)
+            saveLocalDraft()
+            return
+        }
 
         do {
             if let existingId = draftId {
@@ -87,17 +121,27 @@ final class ComposeViewModel: ObservableObject {
             }
             isDirty = false
             draftSavedAt = Date()
+            // Remote save succeeded — clean up local fallback if present
+            cleanupLocalDraft()
         } catch {
-            // Auto-save failures are silent; user can still save manually
+            // Remote save failed — fall back to local draft (C3)
+            logger.warning("Remote draft save failed: \(error.localizedDescription). Saving locally.")
+            saveLocalDraft()
         }
     }
 
     func discardDraft() async {
         stopAutoSave()
-        if let token = accessToken, let id = draftId {
-            try? await gmailService.deleteDraft(accessToken: token, draftId: id)
+        if let token = await resolveToken(), let id = draftId {
+            do {
+                try await gmailService.deleteDraft(accessToken: token, draftId: id)
+                draftId = nil // M3: only nil after successful delete
+            } catch {
+                // M3: Keep draftId so caller knows remote draft still exists
+                logger.warning("Failed to discard remote draft \(id): \(error.localizedDescription)")
+            }
         }
-        draftId = nil
+        cleanupLocalDraft()
     }
 
     /// Load an existing draft message into the compose fields.
@@ -118,6 +162,34 @@ final class ComposeViewModel: ObservableObject {
         } catch {
             errorMessage = "Failed to load draft"
         }
+    }
+
+    // MARK: - Local Draft Fallback (C3)
+
+    private func saveLocalDraft() {
+        let draft = LocalDraft(
+            to: to, cc: cc, bcc: bcc,
+            subject: subject, body: body,
+            accountId: accountId,
+            remoteDraftId: draftId
+        )
+        do {
+            if let existingId = localDraftId {
+                try persistenceService.deleteLocalDraft(id: existingId)
+            }
+            try persistenceService.saveLocalDraft(draft)
+            localDraftId = draft.id
+            isDirty = false
+            draftSavedAt = draft.savedAt
+        } catch {
+            logger.error("Local draft save also failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func cleanupLocalDraft() {
+        guard let id = localDraftId else { return }
+        try? persistenceService.deleteLocalDraft(id: id)
+        localDraftId = nil
     }
 
     // MARK: - Reply / Forward
@@ -181,9 +253,18 @@ final class ComposeViewModel: ObservableObject {
         isSending = true
         errorMessage = nil
 
+        // H5: Use fresh token if available
+        let token: String
+        if let refresher = tokenRefresher, let fresh = try? await refresher() {
+            self.accessToken = fresh
+            token = fresh
+        } else {
+            token = accessToken
+        }
+
         do {
             try await gmailService.sendMessage(
-                accessToken: accessToken,
+                accessToken: token,
                 to: to,
                 subject: subject,
                 body: body,
@@ -193,11 +274,12 @@ final class ComposeViewModel: ObservableObject {
 
             // Clean up draft after successful send
             if let id = draftId {
-                try? await gmailService.deleteDraft(accessToken: accessToken, draftId: id)
+                try? await gmailService.deleteDraft(accessToken: token, draftId: id)
                 draftId = nil
             }
 
             stopAutoSave()
+            cleanupLocalDraft()
             didSend = true
         } catch {
             errorMessage = error.localizedDescription

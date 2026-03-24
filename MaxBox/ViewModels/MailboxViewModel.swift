@@ -1,5 +1,8 @@
 import Foundation
 import Combine
+import os.log
+
+private let logger = Logger(subsystem: "com.maxbox.MaxBox", category: "Mailbox")
 
 @MainActor
 final class MailboxViewModel: ObservableObject {
@@ -18,6 +21,8 @@ final class MailboxViewModel: ObservableObject {
     @Published var isSigningIn = false
     @Published var authError: String?
     @Published var showAddAccountDialog = false
+    /// H3: User-visible banner for persistence or background errors.
+    @Published var persistenceError: String?
 
     let authService: AuthenticationServiceProtocol
     let gmailService: GmailAPIServiceProtocol
@@ -138,14 +143,29 @@ final class MailboxViewModel: ObservableObject {
         guard let account = accounts.first(where: { $0.id == accountId }) else {
             throw AuthError.notAuthenticated
         }
-        return try await authService.getValidAccessToken(for: account)
+        do {
+            return try await authService.getValidAccessToken(for: account)
+        } catch let error as AuthError {
+            // H2: Surface token revocation to user
+            if case .tokenRevoked = error {
+                authError = "\(account.email): \(error.localizedDescription)"
+            }
+            throw error
+        }
     }
 
     func getAccessTokens() async throws -> [(accountId: String, token: String)] {
         var tokens: [(String, String)] = []
         for account in activeAccounts {
-            let token = try await authService.getValidAccessToken(for: account)
-            tokens.append((account.id, token))
+            do {
+                let token = try await authService.getValidAccessToken(for: account)
+                tokens.append((account.id, token))
+            } catch let error as AuthError {
+                if case .tokenRevoked = error {
+                    authError = "\(account.email): \(error.localizedDescription)"
+                }
+                throw error
+            }
         }
         return tokens
     }
@@ -273,11 +293,21 @@ final class MailboxViewModel: ObservableObject {
 
     private func persistAccounts() {
         let persistable = accounts.map { PersistableAccount(from: $0) }
-        try? persistenceService.saveAccounts(persistable)
+        do {
+            try persistenceService.saveAccounts(persistable)
+            persistenceError = nil
+        } catch {
+            logger.error("Failed to save accounts: \(error.localizedDescription)")
+            persistenceError = "Could not save account data — \(error.localizedDescription)"
+        }
     }
 
     private func persistSelection() {
-        try? persistenceService.saveSelection(selection)
+        do {
+            try persistenceService.saveSelection(selection)
+        } catch {
+            logger.error("Failed to save selection: \(error.localizedDescription)")
+        }
     }
 
     func cleanupCaches(for account: Account) {
