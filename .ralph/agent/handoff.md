@@ -1,11 +1,11 @@
 # Session Handoff
 
-_Generated: 2026-03-23 23:09:49 UTC_
+_Generated: 2026-03-23 23:36:50 UTC_
 
 ## Git Context
 
 - **Branch:** `main`
-- **HEAD:** 9f48037: chore: auto-commit before merge (loop primary)
+- **HEAD:** d83d1c9: chore: auto-commit before merge (loop primary)
 
 ## Tasks
 
@@ -28,6 +28,12 @@ _Generated: 2026-03-23 23:09:49 UTC_
 - [x] Add LICENSE.md with MIT license
 - [x] Security audit
 - [x] Data loss risk audit
+- [x] Create ComposeContext model, new compose-reply WindowGroup, and update ComposeView to pre-populate fields from reply/forward context
+- [x] Add Reply, Reply All, Forward buttons to main ContentView toolbar
+- [x] Update MessageWindowView reply/forward to use ComposeContext
+- [x] Verify/fix click-to-select on message list rows
+- [x] Add Privacy tab to Settings with Load Remote Images toggle
+- [x] Add remote images banner to message detail view
 
 
 ## Key Files
@@ -39,11 +45,11 @@ Recently modified:
 - `.ralph/agent/summary.md`
 - `.ralph/agent/tasks.jsonl`
 - `DATA_LOSS_AUDIT.md`
-- `PROMPT.md`
-- `README.md`
-- `SECURITY_AUDIT.md`
-- `docs/index.html`
-- `scripts/notarize.sh`
+- `MaxBox.xcodeproj/project.pbxproj`
+- `MaxBox/MaxBoxApp.swift`
+- `MaxBox/Models/ComposeContext.swift`
+- `MaxBox/Models/Message.swift`
+- `MaxBox/ViewModels/ComposeViewModel.swift`
 
 ## Next Session
 
@@ -52,12 +58,9 @@ Session completed successfully. No pending work.
 **Original objective:**
 
 ```
-- Expand the .gitignore as necessary
-- Create a new pubino/maxbox repo
-- Create a simple Github Pages site
-- Add an interactive and colorful notarization script to notarize against Apple's service.  Pull as much info as possible from Keychain, etc, prompt for the rest (keychain profile "notary")
-- Document the app and developer info in README.md
-- Add a LICENSE.md with MIT license and &copy; Princeton University
-- Audit the project for security
-- Audit the project for data loss risk
+- Add reply, reply all, and forward buttons to the main toolbar that become active when a message is selected in the message list.
+- Wire the reply, reply all, and forward buttons to open a new compose message window with the selected message quoted and the header fields appropriately populated.
+- Ensure clicking anywhere on a message as it appears in the message l$ist selects the clicked message.
+- Add a Privacy tab to the Settings window.
+- Add a toggle to the Privacy tab, default disabled, to...
 ```
