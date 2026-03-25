@@ -142,6 +142,7 @@ struct ComposeView: View {
             }
 
             if let ctx = draftContext {
+                viewModel.originalMessageId = ctx.messageId
                 await viewModel.loadDraft(accessToken: token, messageId: ctx.messageId)
             } else if let ctx = composeContext {
                 viewModel.populateFromContext(ctx)

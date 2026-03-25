@@ -44,9 +44,8 @@ struct MessageListView: View {
                             message: message,
                             accountEmail: showAccountBadge ? mailboxVM.accountEmail(for: message.accountId ?? "") : nil
                         )
-                        .contentShape(Rectangle())
                         .tag(message.id)
-                        .simultaneousGesture(TapGesture(count: 2).onEnded {
+                        .background(DoubleClickHandler {
                             let accountId = message.accountId ?? mailboxVM.selectedAccountId ?? ""
                             if message.isDraft {
                                 openWindow(id: "compose-draft", value: DraftComposeContext(
@@ -149,6 +148,38 @@ struct MessageRowView: View {
             }
         }
         .opacity(message.isRead ? 0.85 : 1.0)
+    }
+}
+
+// MARK: - Native macOS double-click handler (does not interfere with List selection)
+
+private struct DoubleClickHandler: NSViewRepresentable {
+    let action: () -> Void
+
+    func makeNSView(context: Context) -> DoubleClickView {
+        DoubleClickView(action: action)
+    }
+
+    func updateNSView(_ nsView: DoubleClickView, context: Context) {
+        nsView.action = action
+    }
+
+    final class DoubleClickView: NSView {
+        var action: () -> Void
+
+        init(action: @escaping () -> Void) {
+            self.action = action
+            super.init(frame: .zero)
+        }
+
+        required init?(coder: NSCoder) { fatalError() }
+
+        override func mouseDown(with event: NSEvent) {
+            super.mouseDown(with: event)
+            if event.clickCount == 2 {
+                action()
+            }
+        }
     }
 }
 

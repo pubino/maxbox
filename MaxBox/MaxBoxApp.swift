@@ -32,6 +32,14 @@ struct MaxBoxApp: App {
             CommandGroup(after: .toolbar) {
                 ToggleBCCMenuItem()
             }
+            CommandMenu("Message") {
+                MessageMenuItem(label: "Reply", shortcut: "r", modifiers: .command) { $0.reply }
+                MessageMenuItem(label: "Reply All", shortcut: "r", modifiers: [.command, .shift]) { $0.replyAll }
+                MessageMenuItem(label: "Forward", shortcut: "f", modifiers: [.command, .shift]) { $0.forward }
+                Divider()
+                MessageMenuItem(label: "Archive", shortcut: "e", modifiers: .command) { $0.archive }
+                MessageMenuItem(label: "Delete", shortcut: .delete, modifiers: .command) { $0.trash }
+            }
         }
 
         WindowGroup("New Message", id: "compose", for: UUID.self) { _ in
@@ -114,6 +122,25 @@ private struct OpenActivityWindowButton: View {
     }
 }
 
+private struct MessageMenuItem: View {
+    let label: String
+    let shortcut: KeyEquivalent
+    let modifiers: EventModifiers
+    let action: (MessageActions) -> (() -> Void)?
+
+    @FocusedValue(\.messageActions) var messageActions
+
+    var body: some View {
+        Button(label) {
+            if let actions = messageActions {
+                action(actions)?()
+            }
+        }
+        .keyboardShortcut(shortcut, modifiers: modifiers)
+        .disabled(messageActions == nil || action(messageActions!) == nil)
+    }
+}
+
 private struct ToggleBCCMenuItem: View {
     @FocusedValue(\.showBcc) var showBcc
 
@@ -132,9 +159,26 @@ struct ShowBccKey: FocusedValueKey {
     typealias Value = Binding<Bool>
 }
 
+struct MessageActions {
+    var reply: (() -> Void)?
+    var replyAll: (() -> Void)?
+    var forward: (() -> Void)?
+    var archive: (() -> Void)?
+    var trash: (() -> Void)?
+}
+
+struct MessageActionsKey: FocusedValueKey {
+    typealias Value = MessageActions
+}
+
 extension FocusedValues {
     var showBcc: Binding<Bool>? {
         get { self[ShowBccKey.self] }
         set { self[ShowBccKey.self] = newValue }
+    }
+
+    var messageActions: MessageActions? {
+        get { self[MessageActionsKey.self] }
+        set { self[MessageActionsKey.self] = newValue }
     }
 }

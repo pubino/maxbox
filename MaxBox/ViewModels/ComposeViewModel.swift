@@ -20,6 +20,9 @@ final class ComposeViewModel: ObservableObject {
     private(set) var isDirty = false
     var accessToken: String?
 
+    /// The Gmail message ID of the source draft (used to remove it from the list on discard).
+    var originalMessageId: String?
+
     /// Closure to obtain a fresh access token, refreshing if needed (H5).
     var tokenRefresher: (() async throws -> String)?
 
@@ -136,12 +139,21 @@ final class ComposeViewModel: ObservableObject {
             do {
                 try await gmailService.deleteDraft(accessToken: token, draftId: id)
                 draftId = nil // M3: only nil after successful delete
+                // Notify message list to remove the draft from view
+                if let messageId = originalMessageId {
+                    NotificationCenter.default.post(
+                        name: .draftDiscarded,
+                        object: nil,
+                        userInfo: ["messageId": messageId]
+                    )
+                }
             } catch {
                 // M3: Keep draftId so caller knows remote draft still exists
                 logger.warning("Failed to discard remote draft \(id): \(error.localizedDescription)")
             }
         }
         cleanupLocalDraft()
+        isDirty = false
     }
 
     /// Load an existing draft message into the compose fields.

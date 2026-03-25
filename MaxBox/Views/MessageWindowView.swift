@@ -10,9 +10,21 @@ struct MessageWindowView: View {
     @State private var showTrashConfirmation = false
     @State private var showArchiveConfirmation = false
 
+    private var messageActions: MessageActions? {
+        guard viewModel.message != nil, !actionInProgress else { return nil }
+        return MessageActions(
+            reply: { replyToMessage() },
+            replyAll: { replyAllToMessage() },
+            forward: { forwardMessage() },
+            archive: { showArchiveConfirmation = true },
+            trash: { showTrashConfirmation = true }
+        )
+    }
+
     var body: some View {
         MessageDetailView(viewModel: viewModel)
             .frame(minWidth: 500, minHeight: 400)
+            .focusedSceneValue(\.messageActions, messageActions)
             .toolbar {
                 ToolbarItemGroup(placement: .automatic) {
                     Button { replyToMessage() } label: {

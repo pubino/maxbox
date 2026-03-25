@@ -10,6 +10,17 @@ struct ContentView: View {
     @State private var showTrashConfirmation = false
     @State private var showArchiveConfirmation = false
 
+    private var messageActions: MessageActions? {
+        guard messageDetailVM.message != nil else { return nil }
+        return MessageActions(
+            reply: { replyToMessage() },
+            replyAll: { replyAllToMessage() },
+            forward: { forwardMessage() },
+            archive: { showArchiveConfirmation = true },
+            trash: { showTrashConfirmation = true }
+        )
+    }
+
     var body: some View {
         NavigationSplitView {
             SidebarView()
@@ -19,6 +30,7 @@ struct ContentView: View {
             MessageDetailView(viewModel: messageDetailVM)
         }
         .navigationSplitViewStyle(.balanced)
+        .focusedSceneValue(\.messageActions, messageActions)
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button { openWindow(id: "compose", value: UUID()) } label: {
@@ -73,6 +85,14 @@ struct ContentView: View {
                 }
             }
         }
+        .task {
+            if mailboxVM.accounts.isEmpty && !hasPromptedForAccount {
+                hasPromptedForAccount = true
+                openSettings()
+            } else if !mailboxVM.activeAccounts.isEmpty {
+                await refreshMessages()
+            }
+        }
         .onChange(of: mailboxVM.selection) {
             Task { await refreshMessages() }
         }
@@ -81,12 +101,6 @@ struct ContentView: View {
                 Task { await loadMessageDetail(id: id) }
             } else {
                 messageDetailVM.message = nil
-            }
-        }
-        .onAppear {
-            if mailboxVM.accounts.isEmpty && !hasPromptedForAccount {
-                hasPromptedForAccount = true
-                openSettings()
             }
         }
         .onChange(of: mailboxVM.showAddAccountDialog) {

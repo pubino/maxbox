@@ -4,6 +4,10 @@ import os.log
 
 private let logger = Logger(subsystem: "com.maxbox.MaxBox", category: "MessageList")
 
+extension Notification.Name {
+    static let draftDiscarded = Notification.Name("draftDiscarded")
+}
+
 struct CachedMailbox {
     var messages: [Message]
     var fetchedAt: Date
@@ -28,6 +32,7 @@ final class MessageListViewModel: ObservableObject {
     private var hasMorePages = true
     private var currentSelection: SidebarSelection?
     private var refreshTask: Task<Void, Never>?
+    private var draftDiscardObserver: Any?
 
     private(set) var cache: [SidebarSelection: CachedMailbox] = [:]
 
@@ -53,6 +58,20 @@ final class MessageListViewModel: ObservableObject {
         self.gmailService = gmailService ?? GmailAPIService()
         self.activityManager = activityManager ?? .shared
         self.persistenceService = persistenceService ?? PersistenceService()
+
+        draftDiscardObserver = NotificationCenter.default.addObserver(
+            forName: .draftDiscarded, object: nil, queue: .main
+        ) { [weak self] notification in
+            guard let self,
+                  let messageId = notification.userInfo?["messageId"] as? String else { return }
+            self.removeMessage(id: messageId)
+            // Invalidate all DRAFT cache entries so next switch reloads fresh
+            for key in self.cache.keys {
+                if key.mailboxType == .drafts {
+                    self.cache.removeValue(forKey: key)
+                }
+            }
+        }
     }
 
     // MARK: - Cache-aware entry point
